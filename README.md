@@ -15,16 +15,16 @@ Desarrollado con **Spring Boot + Angular + JWT** siguiendo arquitectura REST.
 
 -  Autenticación con JWT
 -  Gestión de socios (CRUD completo)
--  Catálogo de puestos disponibles
-- Registro de alquileres
+- Catálogo de puestos disponibles
+-  Registro de alquileres
 -  Control de pagos y recibos
-- Generación de comprobantes
+-  Generación de comprobantes
 -  Interfaz moderna con Angular + Bootstrap
 -  API REST optimizada con Spring Boot
 
 ---
 
-##  Tecnologías usadas
+## Tecnologías usadas
 
 ### Backend
 - Java 17
@@ -39,4 +39,18 @@ Desarrollado con **Spring Boot + Angular + JWT** siguiendo arquitectura REST.
 - Bootstrap 5
 - RxJS
 
+---
+
 ##  Instalación
+
+###  Backend (Spring Boot)
+
+```bash
+# Clonar repositorio
+git clone https://github.com/tuusuario/tu-repo.git
+
+# Entrar al backend
+cd backend
+
+# Ejecutar proyecto
+./mvnw spring-boot:run
