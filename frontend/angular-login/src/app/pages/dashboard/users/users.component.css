@@ -1,0 +1,189 @@
+
+
+
+
+
+
+/* Importación de tipografía premium */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+
+:host {
+  --primary: #4f46e5;
+  --primary-hover: #4338ca;
+  --success: #22c55e;
+  --danger: #ef4444;
+  --warning: #f59e0b;
+  --slate-50: #f8fafc;
+  --slate-100: #f1f5f9;
+  --slate-200: #e2e8f0;
+  --slate-700: #334155;
+  --slate-900: #0f172a;
+}
+
+.container {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  max-width: 1100px;
+}
+
+/* Título con gradiente elegante */
+.title-gradient {
+  background: linear-gradient(135deg, var(--slate-900) 0%, var(--primary) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 800;
+  letter-spacing: -0.025em;
+}
+
+/* Header con efecto Glass */
+.header-section {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  border: 1px solid white;
+}
+
+.count-badge {
+  background: var(--slate-100);
+  color: var(--slate-700);
+  font-size: 0.85rem;
+  padding: 0.6rem 1rem;
+  border-radius: 10px;
+  border: 1px solid var(--slate-200);
+}
+
+/* Card y Tabla */
+.card-main {
+  background: white;
+  border: 1px solid var(--slate-200);
+  border-radius: 1.25rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.table thead th {
+  background-color: var(--slate-50);
+  color: var(--slate-700);
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-top: none;
+}
+
+.table tbody tr {
+  transition: background-color 0.2s;
+}
+
+.table tbody tr:hover {
+  background-color: #fcfdfe;
+}
+
+/* Avatar con inicial */
+.avatar-circle {
+  width: 38px;
+  height: 38px;
+  background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%);
+  color: var(--primary);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+}
+
+/* Badges de Estado y Rol */
+.role-badge {
+  padding: 0.4rem 0.8rem;
+  border-radius: 8px;
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+
+.role-badge.admin { background: #fef2f2; color: #b91c1c; border: 1px solid #fee2e2; }
+.role-badge.user { background: #f0fdf4; color: #15803d; border: 1px solid #dcfce7; }
+
+/* Switch Moderno */
+.custom-switch .form-check-input {
+  width: 2.8em;
+  height: 1.4em;
+  background-color: var(--slate-200);
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.custom-switch .form-check-input:checked {
+  background-color: var(--success);
+}
+
+/* Botones de Acción Minimalistas */
+.btn-action {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  border: 1px solid var(--slate-200);
+  background: white;
+}
+
+.btn-edit { color: var(--warning); }
+.btn-edit:hover { background: #fffbeb; border-color: #fef3c7; transform: translateY(-2px); }
+
+.btn-delete { color: var(--danger); }
+.btn-delete:hover { background: #fef2f2; border-color: #fee2e2; transform: translateY(-2px); }
+
+/* Overlay de Edición Blur */
+.edit-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.4);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1050;
+  padding: 1rem;
+}
+
+.edit-modal {
+  background: white;
+  border-radius: 24px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.form-control, .form-select {
+  padding: 0.75rem 1rem;
+  border-radius: 12px;
+  border: 1px solid var(--slate-200);
+  font-size: 0.95rem;
+}
+
+.form-control:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
+}
+
+.btn-primary-modern {
+  background: var(--primary);
+  color: white;
+  padding: 0.8rem 1.5rem;
+  border-radius: 12px;
+  font-weight: 600;
+  border: none;
+  transition: all 0.2s;
+}
+
+.btn-primary-modern:hover {
+  background: var(--primary-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.4);
+}
+
+
+.role-badge.cajero {
+  background: #f5f3ff;
+  color: #5b21b6;
+  border: 1px solid #ddd6fe;
+}

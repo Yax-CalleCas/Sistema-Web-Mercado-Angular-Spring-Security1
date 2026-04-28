@@ -1,0 +1,239 @@
+/* ====================== DASHBOARD APROMEC STYLE ====================== */
+
+/* Layout principal */
+.app-shell {
+  display: flex;
+  min-height: 100vh;
+  background-color: #f8f1e9; /* tono beige claro como en la imagen */
+}
+
+.sidebar {
+  width: 260px;
+  background-color: #0a3d2f; /* verde oscuro */
+  color: white;
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  height: 100vh;
+  overflow-y: auto;
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+  z-index: 100;
+}
+
+.sidebar-header {
+  padding: 1.5rem 1.25rem;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.sidebar-header h4 {
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.sidebar-nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sidebar-nav li {
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+.sidebar-nav .nav-link {
+  display: flex;
+  align-items: center;
+  padding: 0.9rem 1.25rem;
+  color: #ddd;
+  text-decoration: none;
+  transition: all 0.3s;
+}
+
+.sidebar-nav .nav-link:hover,
+.sidebar-nav .nav-link.active {
+  background-color: rgba(255,255,255,0.1);
+  color: white;
+  padding-left: 1.5rem;
+}
+
+.sidebar-nav i {
+  margin-right: 12px;
+  width: 20px;
+}
+
+.sidebar-footer {
+  margin-top: auto;
+  padding: 1.25rem;
+}
+
+/* Contenido principal */
+.main-content {
+  margin-left: 260px;
+  flex: 1;
+  background-color: #f8f1e9;
+  min-height: 100vh;
+}
+
+.topbar {
+  background: white;
+  padding: 1.25rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  border-bottom: 1px solid #eee;
+}
+
+.topbar h1 {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #2c3e50;
+}
+
+.topbar p {
+  color: #6c757d;
+  margin: 0;
+}
+
+/* Sección de control rápido */
+.quick-control {
+  background: white;
+  margin: 1.5rem 2rem;
+  padding: 1.75rem 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+
+.quick-control h4 {
+  color: #c45d2a;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+.quick-control h2 {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+/* Tarjetas de estadísticas */
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.25rem;
+  margin: 0 2rem;
+}
+
+.stat-card {
+  background: white;
+  padding: 1.75rem 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+  text-align: center;
+  transition: transform 0.2s;
+}
+
+.stat-card:hover {
+  transform: translateY(-4px);
+}
+
+.stat-card.danger {
+  border-left: 5px solid #c45d2a;
+}
+
+.stat-label {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #6c757d;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.stat-number {
+  font-size: 2.8rem;
+  font-weight: 700;
+  color: #0a3d2f;
+  margin: 0.5rem 0 0;
+}
+
+/* Tarjetas de secciones (Últimos pagos y Deudas) */
+.section-card {
+  background: white;
+  margin: 1.5rem 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+  overflow: hidden;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.25rem 1.75rem;
+  border-bottom: 1px solid #eee;
+}
+
+.section-header h5 {
+  margin: 0;
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+/* Tablas */
+.table {
+  margin-bottom: 0;
+}
+
+.table th {
+  background-color: #f8f1e9;
+  font-weight: 600;
+  color: #5a5a5a;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  letter-spacing: 0.5px;
+}
+
+.table td {
+  padding: 1rem 1.25rem;
+  vertical-align: middle;
+}
+
+/* Botones estilo imagen */
+.btn-primary {
+  background-color: #c45d2a;
+  border-color: #c45d2a;
+}
+
+.btn-primary:hover {
+  background-color: #a94e22;
+  border-color: #a94e22;
+}
+
+.btn-warning {
+  background-color: #c45d2a;
+  border-color: #c45d2a;
+  color: white;
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+  .sidebar {
+    width: 220px;
+  }
+  .main-content {
+    margin-left: 220px;
+  }
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    position: fixed;
+    transform: translateX(-100%);
+    transition: transform 0.3s;
+  }
+  .sidebar.open {
+    transform: translateX(0);
+  }
+  .main-content {
+    margin-left: 0;
+  }
+}

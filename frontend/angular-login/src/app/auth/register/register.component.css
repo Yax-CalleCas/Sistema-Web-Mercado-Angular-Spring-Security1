@@ -1,0 +1,72 @@
+/* Contenedor principal que ocupa toda la pantalla */
+.login-wrapper {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #0f172a; /* Fondo azul oscuro profundo */
+  padding: 20px;
+}
+
+/* Tarjeta del formulario */
+.login-card {
+  background: #1e293b; /* Fondo de la tarjeta un poco más claro */
+  padding: 2.5rem;
+  border-radius: 1rem;
+  width: 100%;
+  max-width: 550px; /* Evita que sea gigante en pantallas anchas */
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Inputs personalizados */
+.custom-input {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  color: white !important;
+  padding: 0.75rem;
+}
+
+.custom-input:focus {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+  border-color: #3b82f6 !important;
+  box-shadow: none;
+}
+
+/* Iconos al lado del input */
+.custom-icon-box {
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  background: rgba(255, 255, 255, 0.02) !important;
+}
+
+/* Botón principal */
+.btn-login {
+  background-color: #3b82f6;
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: 0.5rem;
+  transition: background 0.3s ease;
+}
+
+.btn-login:hover {
+  background-color: #2563eb;
+  color: white;
+}
+
+/* Botón de volver */
+.btn-outline-light-custom {
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: rgba(255, 255, 255, 0.8);
+  text-decoration: none;
+}
+
+.btn-outline-light-custom:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: white;
+}
+
+/* Mensajes de error */
+.invalid-feedback {
+  color: #fb7185;
+  font-size: 0.8rem;
+}

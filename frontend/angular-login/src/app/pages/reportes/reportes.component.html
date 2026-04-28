@@ -1,0 +1,62 @@
+<div class="container mt-4">
+
+  <h3>Reportes</h3>
+
+  <!-- CAJA DIARIA -->
+  <div class="card mb-3 shadow-sm">
+    <div class="card-body">
+
+      <h5>Caja Diaria</h5>
+
+      <input type="date" class="form-control mb-2" [(ngModel)]="fecha">
+
+      <button class="btn btn-primary" (click)="obtenerCaja()">
+        Generar
+      </button>
+
+      <div class="mt-3">
+        <strong>Total: </strong> S/ {{ totalCaja }}
+      </div>
+
+    </div>
+  </div>
+
+  <!-- DEUDAS POR SOCIO -->
+  <div class="card shadow-sm">
+    <div class="card-body">
+
+      <h5>Deudas por Socio</h5>
+
+      <input type="number"
+             class="form-control mb-2"
+             placeholder="ID Socio"
+             [(ngModel)]="socioId">
+
+      <button class="btn btn-warning" (click)="obtenerDeudas()">
+        Buscar
+      </button>
+
+      <table class="table table-sm mt-3" *ngIf="deudas.length > 0">
+        <thead>
+        <tr>
+          <th>ID</th>
+          <th>Monto</th>
+          <th>Fecha</th>
+          <th>Pagado</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr *ngFor="let d of deudas">
+          <td>{{ d.id }}</td>
+          <td>{{ d.monto }}</td>
+          <td>{{ d.fechaGeneracion }}</td>
+          <td>{{ d.pagado ? 'SI' : 'NO' }}</td>
+        </tr>
+        </tbody>
+      </table>
+
+    </div>
+  </div>
+
+</div>

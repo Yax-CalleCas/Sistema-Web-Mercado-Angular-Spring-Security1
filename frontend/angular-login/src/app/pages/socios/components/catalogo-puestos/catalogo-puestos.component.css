@@ -1,0 +1,4 @@
+/* Archivo de estilos para catalogo */
+.card-puesto {
+  transition: transform 0.3s;
+}

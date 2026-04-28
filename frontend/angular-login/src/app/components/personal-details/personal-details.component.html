@@ -1,0 +1,23 @@
+<div class="card p-4">
+  <div *ngIf="!editMode; else editForm">
+    <h3>Detalles Personales</h3>
+    <p><b> ID: </b> {{user?.id}} </p>
+    <p><b> Usuario (Email): </b> {{user?.username}} </p>
+    <p><b> Rol: </b> {{user?.role}} </p>
+    <p><b> Estado: </b> {{user?.enabled ? 'Activo' : 'Inactivo'}} </p>
+
+    <button class="btn btn-primary" (click)="editMode=true">Editar Perfil</button>
+  </div>
+
+  <ng-template #editForm>
+    <form [formGroup]="registerForm" (ngSubmit)="savePersonalDetailsData()">
+      <div class="mb-3">
+        <label class="form-label">Email / Usuario</label>
+        <input formControlName="username" class="form-control" readonly>
+      </div>
+
+      <button type="submit" class="btn btn-success me-2">Guardar</button>
+      <button type="button" class="btn btn-secondary" (click)="editMode=false">Cancelar</button>
+    </form>
+  </ng-template>
+</div>

@@ -1,0 +1,60 @@
+/* Estilos Base heredados */
+.bg-light-soft { background-color: #f9fafb; }
+.text-indigo { color: #4f46e5; }
+.bg-light-blue { background-color: #eff6ff; }
+
+/* Animación de la Card del Puesto */
+.card-puesto {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid #f1f5f9 !important;
+}
+
+.card-puesto:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04) !important;
+}
+
+/* Imagen del Puesto */
+.card-img-puesto {
+  height: 200px;
+  width: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.card-puesto:hover .card-img-puesto {
+  transform: scale(1.05);
+}
+
+/* Overlay de Código en la Imagen */
+.code-overlay {
+  background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 100%);
+}
+
+/* Botones con estilo Outline */
+.btn-outline-warning {
+  border-color: #fef3c7;
+  color: #d97706;
+}
+.btn-outline-warning:hover {
+  background: #f59e0b;
+  color: white;
+  border-color: #f59e0b;
+}
+
+.btn-outline-danger {
+  border-color: #fee2e2;
+  color: #dc2626;
+}
+.btn-outline-danger:hover {
+  background: #ef4444;
+  color: white;
+  border-color: #ef4444;
+}
+
+.badge {
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  padding: 0.5em 1em;
+  border-radius: 6px;
+}

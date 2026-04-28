@@ -1,0 +1,112 @@
+/* Contenedor que ocupa toda la pantalla */
+.login-wrapper {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  padding: 20px;
+}
+
+/* Tarjeta con efecto de cristal (Glassmorphism) */
+.login-card {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 40px;
+  border-radius: 20px;
+  width: 100%;
+  max-width: 400px;
+}
+
+/* Estilo de los Inputs */
+.custom-input {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  color: white !important;
+  padding: 12px 15px;
+  border-radius: 10px;
+  transition: all 0.3s ease;
+}
+
+.custom-input:focus {
+  background: rgba(255, 255, 255, 0.1) !important;
+  border-color: #3b82f6 !important;
+  box-shadow: 0 0 15px rgba(59, 130, 246, 0.3);
+  outline: none;
+}
+
+.custom-input::placeholder {
+  color: rgba(255, 255, 255, 0.3);
+}
+
+/* Botón de Iniciar Sesión */
+.btn-login {
+  background: #3b82f6;
+  border: none;
+  color: white;
+  padding: 12px;
+  border-radius: 10px;
+  font-size: 1.1rem;
+  transition: all 0.3s ease;
+}
+
+.btn-login:hover:not(:disabled) {
+  background: #2563eb;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(37, 99, 235, 0.4);
+}
+
+.btn-login:disabled {
+  opacity: 0.6;
+  background: #64748b;
+}
+
+/* Mensajes de error */
+.error-msg {
+  color: #fb7185;
+  font-size: 0.8rem;
+  margin-top: 5px;
+}
+
+.is-invalid {
+  border-color: #fb7185 !important;
+}
+
+
+/* Alerta personalizada de error (Credenciales Incorrectas) */
+.alert-error-custom {
+  background: rgba(251, 113, 133, 0.2); /* Rosa traslúcido */
+  border: 1px solid #fb7185;
+  color: #fb7185;
+  padding: 10px;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  text-align: center;
+  animation: shake 0.4s ease-in-out; /* Efecto de vibración al aparecer */
+}
+
+/* Botón Crear Cuenta (Estilo Outlined Cristal) */
+.btn-outline-light-custom {
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.05);
+  color: white;
+  transition: all 0.3s ease;
+  border-radius: 10px;
+  padding: 8px;
+}
+
+.btn-outline-light-custom:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: white;
+  color: white;
+}
+
+/* Animación de vibración para el error */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+/* Reutiliza tus clases anteriores (custom-input, btn-login, etc.) */

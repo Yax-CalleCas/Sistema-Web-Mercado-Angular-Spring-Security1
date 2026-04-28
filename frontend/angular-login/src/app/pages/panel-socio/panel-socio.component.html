@@ -1,0 +1,61 @@
+<div class="container py-4 animate__animated animate__fadeIn">
+
+  <!-- HEADER -->
+  <div class="card border-0 shadow-sm rounded-4 bg-primary text-white p-4 mb-4">
+    <div class="d-flex align-items-center justify-content-between">
+
+      <div class="d-flex align-items-center">
+        <img [src]="socioActual?.fotoUrl || 'https://ui-avatars.com/api/?name='+socioActual?.nombres"
+             class="rounded-circle border border-3 border-white"
+             width="70">
+
+        <div class="ms-3">
+          <h2 class="fw-bold mb-0">
+            Panel de {{ socioActual?.nombres }}
+          </h2>
+          <p class="mb-0 opacity-75">
+            Gestiona tus puestos y recibos del mercado
+          </p>
+        </div>
+      </div>
+
+      <button class="btn btn-outline-light rounded-pill"
+              (click)="logout()">
+        <i class="bi bi-box-arrow-right"></i> Salir
+      </button>
+
+    </div>
+  </div>
+
+  <!-- TABS -->
+  <nav class="nav nav-pills nav-fill gap-2 p-1 small bg-white border rounded-4 shadow-sm mb-4">
+
+    <button class="nav-link rounded-3 fw-bold"
+            [class.active]="tab === 'catalogo'"
+            (click)="tab = 'catalogo'">
+      <i class="bi bi-shop me-2"></i> Catálogo de Puestos
+    </button>
+
+    <button class="nav-link rounded-3 fw-bold"
+            [class.active]="tab === 'recibos'"
+            (click)="tab = 'recibos'">
+      <i class="bi bi-receipt-cutoff me-2"></i> Mis Recibos
+    </button>
+
+  </nav>
+
+  <!-- CONTENIDO -->
+  <div [ngSwitch]="tab">
+
+    <!-- CATALOGO -->
+    <app-catalogo-puestos
+      *ngSwitchCase="'catalogo'"
+      [socioActual]="socioActual">
+    </app-catalogo-puestos>
+
+    <!-- RECIBOS -->
+  
+
+  </div>
+
+</div>

@@ -1,0 +1,64 @@
+/* Gradientes y Estilos de Fondo */
+.bg-dashboard {
+  background: linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%);
+}
+
+.title-gradient {
+  background: linear-gradient(45deg, #4f46e5, #0ea5e9);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 800;
+}
+
+/* Tabs */
+.nav-pills .nav-link {
+  color: #64748b;
+  padding: 10px 20px;
+}
+.nav-pills .nav-link.active {
+  background-color: #4f46e5 !important;
+  color: white !important;
+}
+
+/* Efectos de Card */
+.card-puesto-hover {
+  transition: transform 0.3s ease;
+}
+.card-puesto-hover:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+}
+
+/* Botón Moderno */
+.btn-primary-modern {
+  background-color: #4f46e5;
+  border: none;
+  color: white;
+  transition: 0.3s;
+}
+.btn-primary-modern:hover {
+  background-color: #4338ca;
+  transform: scale(1.02);
+}
+
+/* Botones de acción tabla admin */
+.btn-action {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: 0.2s;
+}
+.btn-edit { background: #fef9c3; color: #a16207; }
+.btn-delete { background: #fee2e2; color: #b91c1c; }
+
+.count-badge {
+  background: #f1f5f9;
+  color: #475569;
+  font-weight: bold;
+  border-radius: 20px;
+  padding: 5px 15px;
+}

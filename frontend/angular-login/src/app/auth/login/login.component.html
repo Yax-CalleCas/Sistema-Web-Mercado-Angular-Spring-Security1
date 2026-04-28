@@ -1,0 +1,46 @@
+<div class="login-wrapper">
+  <div class="login-card shadow-lg">
+    <div class="text-center mb-4">
+      <h2 class="fw-bold text-white">Bienvenido</h2>
+      <p class="text-white-50">Ingresa al sistema de APROMEC</p>
+    </div>
+
+    <div class="alert-error-custom mb-3" *ngIf="loginError">
+      <i class="bi bi-exclamation-triangle-fill me-2"></i>
+      {{ loginError }}
+    </div>
+
+    <form [formGroup]="loginForm" (ngSubmit)="login()">
+      <div class="mb-3">
+        <label class="form-label text-white-50 small">Correo Electrónico</label>
+        <input formControlName="username" type="email" class="form-control custom-input"
+               placeholder="ejemplo@mppcibertec.com" [class.is-invalid]="email.invalid && email.touched">
+        <div *ngIf="email.invalid && (email.dirty || email.touched)" class="error-msg">
+          <small>Formato de correo no válido.</small>
+        </div>
+      </div>
+
+      <div class="mb-4">
+        <label class="form-label text-white-50 small">Contraseña</label>
+        <input formControlName="password" type="password" class="form-control custom-input"
+               placeholder="••••••••" [class.is-invalid]="password.invalid && password.touched">
+        <div *ngIf="password.invalid && (password.dirty || password.touched)" class="error-msg">
+          <small>La contraseña es requerida.</small>
+        </div>
+      </div>
+
+      <div class="d-grid gap-2">
+        <button type="submit" class="btn btn-login fw-bold" [disabled]="loginForm.invalid">
+          Iniciar Sesión
+        </button>
+
+        <div class="text-center mt-3">
+          <p class="text-white-50 small mb-2">¿No tienes una cuenta?</p>
+          <a routerLink="/registrarse" class="btn btn-outline-light-custom btn-sm w-100">
+            Crear cuenta nueva
+          </a>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

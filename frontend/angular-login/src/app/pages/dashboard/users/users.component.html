@@ -1,0 +1,114 @@
+<div class="container mt-5 animate__animated animate__fadeIn">
+
+  <div class="header-section d-flex justify-content-between align-items-center mb-4 p-4 shadow-sm rounded-4 bg-white">
+    <div>
+      <h2 class="title-gradient mb-0">Gestión de Usuarios</h2>
+      <p class="text-muted small mb-0">Administra los accesos y roles de tu plataforma</p>
+    </div>
+    <div class="d-flex align-items-center gap-3">
+      <span class="badge count-badge">{{ users.length }} Usuarios</span>
+      <button class="btn btn-primary-modern shadow-sm" (click)="createNew()">
+        <i class="bi bi-person-plus-fill me-2"></i>Nuevo Usuario
+      </button>
+    </div>
+  </div>
+
+  <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+    <div class="table-responsive">
+      <table class="table table-hover mb-0">
+        <thead class="bg-light-blue">
+        <tr>
+          <th class="ps-4 py-3 text-uppercase fs-xs tracking-wider">ID</th>
+          <th class="py-3 text-uppercase fs-xs tracking-wider">Usuario</th>
+          <th class="py-3 text-uppercase fs-xs tracking-wider">Rol</th>
+          <th class="py-3 text-uppercase fs-xs tracking-wider">Estado</th>
+          <th class="py-3 text-center text-uppercase fs-xs tracking-wider">Acciones</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let u of users" class="align-middle border-bottom">
+          <td class="ps-4"><span class="id-tag">#{{u.id}}</span></td>
+          <td>
+            <div class="d-flex align-items-center">
+              <div class="avatar-circle me-3">{{ u.username.charAt(0).toUpperCase() }}</div>
+              <span class="fw-medium text-dark">{{u.username}}</span>
+            </div>
+          </td>
+          <td>
+              <span class="role-badge"
+                    [ngClass]="{'admin': u.role === 'ADMIN', 'user': u.role === 'USER', 'cajero': u.role === 'CAJERO'}">
+                {{ u.role }}
+              </span>
+          </td>
+          <td>
+            <div class="form-check form-switch custom-switch">
+              <input class="form-check-input" type="checkbox" role="switch"
+                     [checked]="u.enabled" (change)="toggle(u.id!)">
+              <span class="ms-2 small fw-semibold" [ngClass]="u.enabled ? 'text-success' : 'text-danger'">
+                  {{ u.enabled ? 'Activo' : 'Inactivo' }}
+                </span>
+            </div>
+          </td>
+          <td class="text-center">
+            <button class="btn btn-action btn-edit me-2" (click)="edit(u)" title="Editar">
+              <i class="bi bi-pencil-square"></i>
+            </button>
+            <button class="btn btn-action btn-delete" (click)="delete(u.id!)" title="Eliminar">
+              <i class="bi bi-trash3-fill"></i>
+            </button>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div *ngIf="selectedUser" class="edit-overlay animate__animated animate__fadeIn">
+    <div class="card edit-modal border-0 shadow-lg p-4">
+      <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-3">
+        <h4 class="fw-bold text-primary-dark mb-0">
+          <i class="bi" [ngClass]="isEditing ? 'bi-person-gear' : 'bi-person-plus'"></i>
+          {{ isEditing ? 'Editar Usuario' : 'Nuevo Usuario' }}
+        </h4>
+        <button class="btn-close shadow-none" (click)="selectedUser = null"></button>
+      </div>
+
+      <div class="row g-3">
+        <div class="col-12">
+          <label class="form-label fw-semibold small">Nombre de Usuario (Email)</label>
+          <div class="input-group shadow-sm">
+            <span class="input-group-text bg-white border-end-0"><i class="bi bi-at"></i></span>
+            <input [(ngModel)]="selectedUser.username" name="username" class="form-control border-start-0" placeholder="ejemplo@correo.com">
+          </div>
+        </div>
+
+        <div class="col-12" *ngIf="!isEditing">
+          <label class="form-label fw-semibold small">Contraseña</label>
+          <div class="input-group shadow-sm">
+            <span class="input-group-text bg-white border-end-0"><i class="bi bi-key"></i></span>
+            <input type="password" [(ngModel)]="selectedUser.password" name="password" class="form-control border-start-0" placeholder="********">
+          </div>
+        </div>
+
+        <div class="col-12">
+          <label class="form-label fw-semibold small">Rol del Sistema</label>
+          <div class="input-group shadow-sm">
+            <span class="input-group-text bg-white border-end-0"><i class="bi bi-shield-lock"></i></span>
+            <select [(ngModel)]="selectedUser.role" name="role" class="form-select border-start-0">
+              <option value="USER">Usuario Estándar</option>
+              <option value="ADMIN">Administrador</option>
+              <option value="CAJERO">Cajero</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-5 d-flex gap-2">
+        <button class="btn btn-light w-100 fw-bold py-2" (click)="selectedUser = null">Cancelar</button>
+        <button class="btn btn-primary-modern w-100 fw-bold py-2" (click)="save()">
+          {{ isEditing ? 'Actualizar' : 'Registrar' }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

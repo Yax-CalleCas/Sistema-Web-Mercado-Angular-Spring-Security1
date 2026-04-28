@@ -1,0 +1,250 @@
+<div class="container mt-5 animate__animated animate__fadeIn">
+
+  <div *ngIf="socioActual">
+    <div class="row mb-4">
+      <div class="col-12">
+        <div class="card border-0 shadow-lg rounded-4 bg-gradient-primary text-white p-4 position-relative overflow-hidden">
+          <div class="position-absolute top-0 end-0 p-3 opacity-25">
+            <i class="bi bi-shop-window" style="font-size: 5rem;"></i>
+          </div>
+
+          <div class="d-flex align-items-center justify-content-between position-relative">
+            <div class="d-flex align-items-center">
+              <div class="position-relative">
+                <img [src]="socioActual.fotoUrl || 'https://ui-avatars.com/api/?name='+socioActual.nombres"
+                     class="rounded-circle border border-4 border-white shadow-sm" width="90" height="90">
+                <span class="position-absolute bottom-0 end-0 bg-success border border-2 border-white rounded-circle p-2"></span>
+              </div>
+              <div class="ms-4">
+                <h2 class="fw-bold mb-0">¡Bienvenido, {{ socioActual.nombres }}!</h2>
+                <p class="mb-0 opacity-75">ID Socio: #{{ socioActual.dni }} | <span class="badge bg-white text-primary">Socio Activo</span></p>
+              </div>
+            </div>
+            <button class="btn btn-blur rounded-pill px-4" (click)="socioActual = null">
+              <i class="bi bi-box-arrow-right me-2"></i>Cerrar Sesión
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <ul class="nav nav-pills mb-4 bg-white p-2 rounded-4 shadow-sm border justify-content-center" id="pills-tab" role="tablist">
+      <li class="nav-item mx-1">
+        <button class="nav-link active rounded-3 px-4 fw-bold" data-bs-toggle="pill" data-bs-target="#pills-catalogo" type="button">
+          <i class="bi bi-grid-3x3-gap me-2"></i>Puestos Disponibles
+        </button>
+      </li>
+      <li class="nav-item mx-1">
+        <button class="nav-link rounded-3 px-4 fw-bold" data-bs-toggle="pill" data-bs-target="#pills-recibos" type="button" (click)="cargarMisPagos()">
+          <i class="bi bi-wallet2 me-2"></i>Mis Pagos y Recibos
+        </button>
+      </li>
+    </ul>
+
+    <div class="tab-content" id="pills-tabContent">
+
+      <div class="tab-pane fade show active" id="pills-catalogo">
+        <div class="row g-4">
+          <div class="col-md-6 col-lg-4" *ngFor="let p of puestosDisponibles">
+            <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden card-puesto-hover">
+              <div class="position-relative">
+                <img [src]="p.imagenUrl || 'https://images.unsplash.com/photo-1534452203293-494d7ddbf7e0?q=80&w=500'"
+                     class="card-img-top" style="height: 200px; object-fit: cover;">
+                <div class="position-absolute top-0 start-0 m-3">
+                  <span class="badge bg-primary shadow" *ngIf="p.esAsociacion">Asociación</span>
+                </div>
+                <div class="position-absolute bottom-0 end-0 m-3">
+                  <span class="badge bg-white text-dark shadow-sm px-3 py-2 rounded-pill">
+                    <i class="bi bi-upc-scan me-1"></i> {{ p.codigo }}
+                  </span>
+                </div>
+              </div>
+
+              <div class="card-body p-4">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                  <h5 class="fw-bold text-dark mb-0">{{ p.ubicacion }}</h5>
+                </div>
+
+                <div class="bg-light rounded-3 p-3 mb-3">
+                  <div class="d-flex justify-content-between mb-1">
+                    <span class="text-muted small">Alquiler Base:</span>
+                    <span class="fw-bold text-success">S/. {{ p.precioAlquiler | number:'1.2-2' }}</span>
+                  </div>
+                  <div class="d-flex justify-content-between">
+                    <span class="text-muted small">Servicios:</span>
+                    <span class="badge" [ngClass]="p.serviciosIncluidos ? 'text-success bg-success-light' : 'text-warning bg-warning-light'">
+                      {{ p.serviciosIncluidos ? 'Incluidos' : 'No incluidos' }}
+                    </span>
+                  </div>
+                </div>
+
+                <div class="row g-2 mb-3" *ngIf="!p.serviciosIncluidos">
+                  <div class="col-6">
+                    <small class="text-muted d-block small">Agua Fija</small>
+                    <strong class="text-dark">S/. {{ p.costoAguaFijo | number:'1.2-2' }}</strong>
+                  </div>
+                  <div class="col-6 border-start ps-3">
+                    <small class="text-muted d-block small">Luz Fija</small>
+                    <strong class="text-dark">S/. {{ p.costoLuzFijo | number:'1.2-2' }}</strong>
+                  </div>
+                </div>
+
+                <button class="btn btn-primary w-100 rounded-pill fw-bold py-2 shadow-sm" (click)="confirmarAlquiler(p)">
+                  <i class="bi bi-check-circle me-2"></i>Alquilar Ahora
+                </button>
+              </div>
+            </div>
+          </div>
+          <div *ngIf="puestosDisponibles.length === 0" class="text-center py-5">
+            <i class="bi bi-emoji-frown fs-1 text-muted"></i>
+            <p class="text-muted mt-2">No hay puestos disponibles por el momento.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-pane fade" id="pills-recibos">
+        <div class="card border-0 shadow-sm rounded-4 overflow-hidden bg-white">
+          <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+              <thead class="bg-light">
+              <tr>
+                <th class="ps-4">Fecha</th>
+                <th>Concepto</th>
+                <th>Monto</th>
+                <th class="text-center">Comprobante</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr *ngFor="let pago of misPagos">
+                <td class="ps-4 small text-muted">{{ pago.fechaPago | date:'dd/MM/yyyy' }}</td>
+                <td>
+                  <div class="fw-bold">{{ pago.concepto }}</div>
+                  <small class="text-muted">Puesto: {{ pago.puesto?.codigo }}</small>
+                </td>
+                <td class="fw-bold text-success text-nowrap">S/. {{ pago.montoTotal | number:'1.2-2' }}</td>
+                <td class="text-center">
+                  <button class="btn btn-outline-danger btn-sm rounded-pill px-3" (click)="imprimirRecibo(pago)">
+                    <i class="bi bi-file-pdf me-1"></i> PDF
+                  </button>
+                </td>
+              </tr>
+              </tbody>
+            </table>
+            <div *ngIf="misPagos.length === 0" class="text-center py-5">
+              <p class="text-muted">Aún no tienes recibos generados.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-4" *ngIf="!socioActual">
+    <div class="col-lg-4">
+      <div class="card border-0 shadow-sm rounded-4 sticky-top" style="top: 2rem;">
+        <div class="card-header bg-white border-0 py-4 ps-4">
+          <h4 class="fw-bold mb-0" [ngClass]="editando ? 'text-warning' : 'text-primary'">
+            <i class="bi" [ngClass]="editando ? 'bi-pencil-square' : 'bi-person-plus-fill'"></i>
+            {{ editando ? 'Editar Socio' : 'Nuevo Socio' }}
+          </h4>
+        </div>
+        <div class="card-body pt-0 px-4">
+          <form (ngSubmit)="guardar()" #socioForm="ngForm">
+            <div class="form-floating mb-3">
+              <input [(ngModel)]="socio.nombres" name="nombres" class="form-control" id="fNombres" placeholder="Nombres" required>
+              <label for="fNombres">Nombres</label>
+            </div>
+            <div class="form-floating mb-3">
+              <input [(ngModel)]="socio.apellidos" name="apellidos" class="form-control" id="fApell" placeholder="Apellidos" required>
+              <label for="fApell">Apellidos</label>
+            </div>
+            <div class="row g-2">
+              <div class="col-6 mb-3">
+                <div class="form-floating">
+                  <input [(ngModel)]="socio.dni" name="dni" class="form-control" id="fDni" placeholder="DNI" maxlength="8" required>
+                  <label for="fDni">DNI</label>
+                </div>
+              </div>
+              <div class="col-6 mb-3">
+                <div class="form-floating">
+                  <input [(ngModel)]="socio.telefono" name="telefono" class="form-control" id="fTel" placeholder="Teléfono">
+                  <label for="fTel">Teléfono</label>
+                </div>
+              </div>
+            </div>
+            <div class="form-floating mb-3">
+              <input [(ngModel)]="socio.direccion" name="direccion" class="form-control" id="fDir" placeholder="Dirección">
+              <label for="fDir">Dirección</label>
+            </div>
+            <div class="form-floating mb-3">
+              <input [(ngModel)]="socio.fotoUrl" name="fotoUrl" class="form-control" id="fFoto" placeholder="URL Foto">
+              <label for="fFoto">URL de la Foto</label>
+            </div>
+            <div class="d-grid gap-2 mb-3">
+              <button type="submit" class="btn btn-primary-modern py-3 shadow-sm rounded-3 fw-bold" [disabled]="!socioForm.valid">
+                {{ editando ? 'Actualizar Datos' : 'Registrar Socio' }}
+              </button>
+              <button type="button" class="btn btn-light py-2 rounded-3" (click)="reset()">Cancelar</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-8">
+      <div class="header-section d-flex justify-content-between align-items-center mb-4 p-4 shadow-sm rounded-4 bg-white">
+        <div>
+          <h2 class="title-gradient mb-0">Panel de Socios</h2>
+          <p class="text-muted small mb-0">Gestión de miembros y acceso al sistema</p>
+        </div>
+        <span class="count-badge px-3 py-2 rounded-pill bg-light fw-bold text-primary">
+          {{ socios.length }} Miembros
+        </span>
+      </div>
+
+      <div class="card border-0 overflow-hidden bg-white shadow-sm rounded-4">
+        <div class="table-responsive">
+          <table class="table table-hover align-middle mb-0">
+            <thead class="bg-light">
+            <tr>
+              <th class="ps-4 py-3">Socio</th>
+              <th>DNI</th>
+              <th>Contacto</th>
+              <th class="text-center">Acciones</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let s of socios">
+              <td class="ps-4">
+                <div class="d-flex align-items-center py-2" (click)="socioActual = s" style="cursor: pointer;">
+                  <img [src]="s.fotoUrl || 'https://ui-avatars.com/api/?name='+s.nombres" class="rounded-circle me-3 border shadow-sm" width="45" height="45">
+                  <div>
+                    <div class="fw-bold text-dark">{{ s.nombres }} {{ s.apellidos }}</div>
+                    <small class="text-primary">Ver Dashboard <i class="bi bi-arrow-right small"></i></small>
+                  </div>
+                </div>
+              </td>
+              <td><span class="badge bg-light text-dark border">{{ s.dni }}</span></td>
+              <td>
+                <div class="small fw-bold">{{ s.telefono || 'Sin tel.' }}</div>
+                <div class="small text-muted">{{ s.direccion || 'Sin dir.' }}</div>
+              </td>
+              <td class="text-center">
+                <div class="d-flex justify-content-center gap-2">
+                  <button (click)="editar(s)" class="btn btn-sm btn-outline-warning rounded-circle" style="width: 35px; height: 35px;">
+                    <i class="bi bi-pencil"></i>
+                  </button>
+                  <button (click)="eliminar(s.id!)" class="btn btn-sm btn-outline-danger rounded-circle" style="width: 35px; height: 35px;">
+                    <i class="bi bi-trash"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
