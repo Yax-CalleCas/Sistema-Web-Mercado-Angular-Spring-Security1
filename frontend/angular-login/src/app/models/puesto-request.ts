@@ -9,4 +9,9 @@ export interface PuestoRequest {
   serviciosIncluidos: boolean;
   costoAguaFijo: number;
   costoLuzFijo: number;
+  descripcion: string;
+  fotosGaleria: string;
+  estado: string;
+  activo: boolean; //
+
 }

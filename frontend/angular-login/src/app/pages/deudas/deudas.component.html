@@ -1,1 +1,48 @@
-<p>deudas works!</p>
+<div class="container">
+
+  <h2>Gestión de Deudas</h2>
+
+  <form (ngSubmit)="guardar()">
+    <input type="number" [(ngModel)]="deuda.monto" name="monto" placeholder="Monto" required>
+
+    <input type="number" [(ngModel)]="deuda.socioId" name="socioId" placeholder="Socio ID" required>
+
+    <input type="number" [(ngModel)]="deuda.puestoId" name="puestoId" placeholder="Puesto ID" required>
+
+    <input type="number" [(ngModel)]="deuda.conceptoId" name="conceptoId" placeholder="Concepto ID" required>
+
+    <button type="submit">
+      {{ editando ? 'Actualizer' : 'Registrar' }}
+    </button>
+
+    <button type="button" (click)="reset()">Cancelar</button>
+  </form>
+
+  <hr>
+
+  <table border="1">
+    <thead>
+    <tr>
+      <th>ID</th>
+      <th>Monto</th>
+      <th>Pagado</th>
+      <th>Acciones</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    <tr *ngFor="let d of deudas">
+      <td>{{ d.id }}</td>
+      <td>{{ d.monto }}</td>
+      <td>{{ d.pagado ? 'Sí' : 'No' }}</td>
+
+      <td>
+        <button (click)="editar(d)">Editar</button>
+        <button (click)="eliminar(d.id!)">Eliminar</button>
+        <button (click)="pagar(d.id!)" *ngIf="!d.pagado">Pagar</button>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+
+</div>

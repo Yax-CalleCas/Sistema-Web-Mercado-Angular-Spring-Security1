@@ -7,6 +7,8 @@ import { Socio } from '../../socios/socios.model';
 import { SocioService } from '../../socios/socios.service';
 import Swal from 'sweetalert2';
 
+declare var bootstrap: any;
+
 @Component({
   selector: 'app-puestos',
   templateUrl: './puestos.component.html',
@@ -21,6 +23,12 @@ export class PuestosComponent implements OnInit {
   editMode = false;
   idEdit: number | null = null;
 
+  // --- LÓGICA DE DETALLE Y GALERÍA 2025 ---
+  puestoSeleccionado: any = null;
+  fotosArray: string[] = [];
+  fotoPrincipalTemporal: string | null = null; // Para no perder la original al jugar con la galería
+
+  // Paginación
   currentPage = 0;
   pageSize = 6;
   totalPages = 0;
@@ -44,14 +52,47 @@ export class PuestosComponent implements OnInit {
     this.cargarSocios();
   }
 
+  // --- MÉTODOS DE GALERÍA ---
+
+  verDetalle(p: any): void {
+    this.puestoSeleccionado = { ...p }; // Clonamos para no afectar la lista original al cambiar fotos
+    this.fotoPrincipalTemporal = p.imagenUrl; // Guardamos la portada real
+
+    // Convertimos el string de la galería en un arreglo real
+    if (p.fotosGaleria) {
+      // Separamos por comas y limpiamos espacios en blanco
+      this.fotosArray = p.fotosGaleria.split(',').map((url: string) => url.trim());
+    } else {
+      this.fotosArray = [];
+    }
+
+    // Abrimos el modal con la API de Bootstrap 5
+    const modalElement = document.getElementById('detalleModal');
+    const modal = new bootstrap.Modal(modalElement);
+    modal.show();
+  }
+
+  /**
+   * Cambia la imagen que se ve en grande en el modal (Efecto 2025)
+   */
+  cambiarFotoPrincipal(url: string): void {
+    this.puestoSeleccionado.imagenUrl = url;
+  }
+
+  // --- GESTIÓN DE FORMULARIO ---
+
   initForm(): void {
     this.form = this.fb.group({
       codigo: ['', [Validators.required, Validators.minLength(3)]],
       ubicacion: ['', Validators.required],
-      categoria: ['', Validators.required], // Campo nuevo agregado
+      categoria: ['', Validators.required],
+      estado: ['DISPONIBLE', Validators.required],
+      activo: [true],
       socioId: [null],
       esAsociacion: [false],
       imagenUrl: [''],
+      descripcion: [''],      // Campo para descripción larga
+      fotosGaleria: [''],     // Campo para URLs separadas por comas
       precioAlquiler: [0, [Validators.required, Validators.min(0)]],
       serviciosIncluidos: [false],
       costoAguaFijo: [0, [Validators.min(0)]],
@@ -96,7 +137,10 @@ export class PuestosComponent implements OnInit {
       return;
     }
 
-    const data: PuestoRequest = this.form.value;
+    const data: PuestoRequest = {
+      ...this.form.value,
+      socioId: this.form.value.socioId === 'null' ? null : this.form.value.socioId
+    };
 
     const request = this.editMode && this.idEdit !== null
       ? this.puestoService.actualizar(this.idEdit, data)
@@ -104,18 +148,17 @@ export class PuestosComponent implements OnInit {
 
     request.subscribe({
       next: () => {
-        const mensaje = this.editMode ? 'Puesto actualizado correctamente' : 'Puesto registrado con éxito';
+        const mensaje = this.editMode ? 'Puesto actualizado' : 'Puesto registrado';
         this.showToast('success', mensaje);
         this.reset();
         this.listar();
       },
       error: (err) => {
         console.error('Error al guardar:', err);
-        this.showToast('error', 'Error al procesar la solicitud');
+        this.showToast('error', 'Error en la solicitud. Revise el código.');
       }
     });
   }
-
   editar(p: Puesto): void {
     this.editMode = true;
     this.idEdit = p.id ?? null;
@@ -123,10 +166,16 @@ export class PuestosComponent implements OnInit {
     this.form.patchValue({
       codigo: p.codigo,
       ubicacion: p.ubicacion,
-      categoria: p.categoria, // Mapeo de categoria al editar
+      categoria: p.categoria,
+      estado: p.estado || 'DISPONIBLE',
+      activo: p.activo ?? true,
       socioId: p.socio?.id ?? null,
       esAsociacion: p.esAsociacion ?? false,
       imagenUrl: p.imagenUrl ?? '',
+      // --- CORRECCIÓN AQUÍ ---
+      descripcion: p.descripcion || '',   // Si es null, enviamos string vacío
+      fotosGaleria: p.fotosGaleria || '', // Si es null, enviamos string vacío
+      // -----------------------
       precioAlquiler: p.precioAlquiler ?? 0,
       serviciosIncluidos: p.serviciosIncluidos ?? false,
       costoAguaFijo: p.costoAguaFijo ?? 0,
@@ -139,23 +188,19 @@ export class PuestosComponent implements OnInit {
   eliminar(id: number): void {
     Swal.fire({
       title: '¿Eliminar Puesto?',
-      text: '¿Estás seguro de que deseas eliminar este puesto?',
+      text: 'Esta acción no se puede deshacer.',
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#d33',
-      cancelButtonColor: '#6c757d',
-      confirmButtonText: 'Sí, eliminar',
-      cancelButtonText: 'Cancelar'
+      confirmButtonText: 'Sí, eliminar'
     }).then((result) => {
       if (result.isConfirmed) {
         this.puestoService.eliminar(id).subscribe({
           next: () => {
-            this.showToast('success', 'Puesto eliminado');
+            this.showToast('success', 'Eliminado correctamente');
             this.listar();
           },
-          error: (err) => {
-            this.showToast('error', 'No se pudo eliminar el puesto');
-          }
+          error: () => this.showToast('error', 'Error al eliminar')
         });
       }
     });
@@ -163,13 +208,17 @@ export class PuestosComponent implements OnInit {
 
   reset(): void {
     this.form.reset({
+      estado: 'DISPONIBLE',
+      activo: true,
       esAsociacion: false,
       socioId: null,
       precioAlquiler: 0,
       serviciosIncluidos: false,
       costoAguaFijo: 0,
       costoLuzFijo: 0,
-      categoria: '' // Reseteo de categoria
+      categoria: '',
+      descripcion: '',      // Corregido: de [''] a ''
+      fotosGaleria: ''      // Corregido: de [''] a ''
     });
     this.editMode = false;
     this.idEdit = null;
@@ -180,7 +229,7 @@ export class PuestosComponent implements OnInit {
       toast: true,
       position: 'top-end',
       showConfirmButton: false,
-      timer: 2500,
+      timer: 2000,
       timerProgressBar: true
     });
     Toast.fire({ icon, title });

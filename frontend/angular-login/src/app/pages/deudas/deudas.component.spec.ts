@@ -1,21 +1,47 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { Component, OnInit } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import Swal from 'sweetalert2';
 
-import { DeudasComponent } from './deudas.component';
+@Component({
+  selector: 'app-deudas',
+  templateUrl: './deudas.component.html',
+  styleUrls: ['./deudas.component.css']
+})
+export class DeudasComponent implements OnInit {
+  deudasPendientes: any[] = [];
+  loading: boolean = false;
 
-describe('DeudasComponent', () => {
-  let component: DeudasComponent;
-  let fixture: ComponentFixture<DeudasComponent>;
+  constructor(private http: HttpClient) {}
 
-  beforeEach(() => {
-    TestBed.configureTestingModule({
-      declarations: [DeudasComponent]
+  ngOnInit(): void {
+    this.cargarDeudas();
+  }
+
+  cargarDeudas() {
+    this.loading = true;
+    this.http.get<any[]>('http://localhost:8080/api/admin/deudas/pendientes').subscribe({
+      next: (data) => {
+        this.deudasPendientes = data;
+        this.loading = false;
+      },
+      error: (err) => {
+        console.error("Error cargando deudas", err);
+        this.loading = false;
+      }
     });
-    fixture = TestBed.createComponent(DeudasComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
+  }
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
-});
+  notificarSocio(deuda: any) {
+    Swal.fire({
+      title: 'Notificar Socio',
+      text: `Se enviara un recordatorio de pago a ${deuda.puesto.socio.nombres} por el mes de ${deuda.mesReferencia}`,
+      icon: 'info',
+      showCancelButton: true,
+      confirmButtonText: 'Enviar Notificacion'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        Swal.fire('Enviado', 'El socio ha sido notificado correctamente', 'success');
+      }
+    });
+  }
+}

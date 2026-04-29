@@ -62,3 +62,33 @@
   border-radius: 20px;
   padding: 5px 15px;
 }
+.card-puesto-hover {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border-radius: 18px;
+}
+
+.card-puesto-hover:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 25px rgba(0,0,0,0.12) !important;
+}
+
+.img-puesto {
+  height: 200px;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.card-puesto-hover:hover .img-puesto {
+  transform: scale(1.1);
+}
+
+.pointer { cursor: pointer; }
+
+/* Para que la galería no rompa el diseño */
+.overflow-auto::-webkit-scrollbar {
+  height: 4px;
+}
+.overflow-auto::-webkit-scrollbar-thumb {
+  background: #0d6efd;
+  border-radius: 10px;
+}

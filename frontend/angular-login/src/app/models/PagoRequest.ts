@@ -3,4 +3,5 @@ export interface PagoRequest {
   puestoId: number;
   monto: number;
   concepto: string;
+
 }

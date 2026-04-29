@@ -6,6 +6,8 @@ import { environment } from 'src/environments/environment';
 export interface UserDTO {
   id?: number;
   username: string;
+  nombres: string;
+  apellidos: string;
   password?: string;
   role: string;
   enabled: boolean;
@@ -16,40 +18,51 @@ export interface UserDTO {
 })
 export class UserService {
 
-  // Usamos la URL base desde environment
+  // La URL ahora coincide con @RequestMapping("/api/v1/users")
   private apiUrl = `${environment.urlHost}api/v1/users`;
 
   constructor(private http: HttpClient) { }
 
-  // Obtener mis datos (Perfil)
-  getMe(): Observable<UserDTO> {
-    return this.http.get<UserDTO>(`${this.apiUrl}/me`).pipe(
-      catchError(this.handleError)
-    );
-  }
-
-  // Listar todos
+  /**
+   * Obtiene la lista de todos los usuarios registrados (Solo Admin).
+   */
   getAll(): Observable<UserDTO[]> {
     return this.http.get<UserDTO[]>(this.apiUrl).pipe(
       catchError(this.handleError)
     );
   }
 
-  // Buscar por ID
+  /**
+   * BUSCAR POR USERNAME: Este es el que usa el DashboardComponent.
+   * Conecta con @GetMapping("/search/{username}") del UserController.java
+   */
+  getUser(username: string): Observable<UserDTO> {
+    return this.http.get<UserDTO>(`${this.apiUrl}/search/${username}`).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  /**
+   * Obtiene un usuario por su ID único.
+   */
   getById(id: number): Observable<UserDTO> {
     return this.http.get<UserDTO>(`${this.apiUrl}/${id}`).pipe(
       catchError(this.handleError)
     );
   }
 
-  // Crear usuario
+  /**
+   * Crea un nuevo usuario.
+   */
   create(user: UserDTO): Observable<UserDTO> {
     return this.http.post<UserDTO>(this.apiUrl, user).pipe(
       catchError(this.handleError)
     );
   }
 
-  // Actualizar usuario
+  /**
+   * Actualiza la información (Put).
+   */
   update(id: number, user: UserDTO): Observable<UserDTO> {
     return this.http.put<UserDTO>(`${this.apiUrl}/${id}`, user).pipe(
       catchError(this.handleError)
@@ -57,9 +70,8 @@ export class UserService {
   }
 
   /**
-   * OPCIÓN RECOMENDADA: Toggle Status usando PUT
-   * Esto evita problemas de compatibilidad con PATCH en algunos entornos.
-   * En Java debe ser @PutMapping("/{id}/status")
+   * Cambia el estado (Activar/Desactivar).
+   * Conecta con @PutMapping("/{id}/status") del UserController.java
    */
   toggleStatus(id: number): Observable<UserDTO> {
     return this.http.put<UserDTO>(`${this.apiUrl}/${id}/status`, {}).pipe(
@@ -68,31 +80,26 @@ export class UserService {
   }
 
   /**
-   * OPCIÓN ALTERNATIVA: Desactivar específico
-   * En Java debe ser @PutMapping("/desactivar/{id}")
+   * Elimina un usuario.
    */
-  desactivarUsuario(id: number): Observable<UserDTO> {
-    return this.http.put<UserDTO>(`${this.apiUrl}/desactivar/${id}`, {}).pipe(
-      catchError(this.handleError)
-    );
-  }
-
-  // Eliminar
   delete(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`).pipe(
       catchError(this.handleError)
     );
   }
 
-  // Manejador de errores centralizado
   private handleError(error: HttpErrorResponse) {
-    if (error.status === 0) {
-      console.error('Error de red o CORS:', error.error);
+    let errorMessage = 'Error desconocido en el servicio de usuarios';
+
+    if (error.status === 401) {
+      errorMessage = 'No autorizado. El token no es válido.';
     } else if (error.status === 403) {
-      console.error('Acceso denegado (403): Revisa los permisos de tu Token JWT.');
-    } else {
-      console.error(`Backend retornó código ${error.status}, cuerpo: `, error.error);
+      errorMessage = 'Prohibido. No tienes permisos de Administrador.';
+    } else if (error.status === 404) {
+      errorMessage = 'El usuario no existe en la base de datos.';
     }
-    return throwError(() => new Error('Error en la operación de usuario. Intente de nuevo.'));
+
+    console.error(`Error ${error.status}: ${error.message}`);
+    return throwError(() => new Error(errorMessage));
   }
 }

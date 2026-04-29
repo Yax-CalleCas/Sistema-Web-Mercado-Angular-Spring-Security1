@@ -1,7 +1,6 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow">
   <div class="container">
-
-    <a class="navbar-brand fw-bold" routerLink="/">
+    <a class="navbar-brand fw-bold" routerLink="/inicio">
       <span class="text-primary">MPP</span> Piura
     </a>
 
@@ -17,38 +16,45 @@
           <li class="nav-item">
             <a class="nav-link"
                [routerLink]="userRole === 'ROLE_ADMIN' ? '/dashboard' : '/mi-panel-socio'"
-               routerLinkActive="active">
+               routerLinkActive="active text-primary">
               <i class="bi bi-house-door me-1"></i> Panel
             </a>
           </li>
 
           <ng-container *ngIf="userRole === 'ROLE_ADMIN'">
             <li class="nav-item">
-              <a class="nav-link" routerLink="/socios" routerLinkActive="active">Socios</a>
+              <a class="nav-link" routerLink="/socios" routerLinkActive="active text-primary">Socios</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" routerLink="/puestos" routerLinkActive="active">Puestos</a>
+              <a class="nav-link" routerLink="/puestos" routerLinkActive="active text-primary">Puestos</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" routerLink="/reportes" routerLinkActive="active">Reportes</a>
+              <a class="nav-link" routerLink="/reportes" routerLinkActive="active text-primary">Reportes</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" routerLink="/admin/users" routerLinkActive="active">Usuarios</a>
+              <a class="nav-link" routerLink="/admin/users" routerLinkActive="active text-primary">Usuarios</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" routerLink="/deudas" routerLinkActive="active text-primary">Cobros</a>
+            </li>
+
+            <li class="nav-item">
+              <a class="nav-link text-warning" routerLink="/gestion-pagos" routerLinkActive="active text-primary">
+                <i class="bi bi-shield-check me-1"></i> Validar Pagos
+              </a>
             </li>
           </ng-container>
 
           <ng-container *ngIf="userRole === 'ROLE_USER'">
             <li class="nav-item">
-              <a class="nav-link" routerLink="/mis-deudas" routerLinkActive="active">Mis Deudas</a>
-            </li>
-
-            <li class="nav-item">
-              <a class="nav-link" routerLink="/panel-socio" routerLinkActive="active">Mi Panel</a>
+              <a class="nav-link" routerLink="/socios/mis-recibos" routerLinkActive="active text-primary text-warning">
+                <i class="bi bi-cash-stack me-1"></i> Mis Recibos
+              </a>
             </li>
           </ng-container>
 
           <li class="nav-item ms-lg-3">
-            <button class="btn btn-outline-danger btn-sm rounded-pill px-3" (click)="logout()">
+            <button class="btn btn-outline-danger btn-sm rounded-pill px-3 shadow-sm" (click)="logout()">
               <i class="bi bi-box-arrow-right me-1"></i> Salir
             </button>
           </li>
@@ -56,7 +62,7 @@
 
         <ng-container *ngIf="!userLoginOn">
           <li class="nav-item">
-            <a class="btn btn-primary btn-sm px-4 rounded-pill" routerLink="/iniciar-sesion">
+            <a class="btn btn-primary btn-sm px-4 rounded-pill shadow" routerLink="/iniciar-sesion">
               Iniciar Sesión
             </a>
           </li>
@@ -70,10 +76,11 @@
 <div *ngIf="userLoginOn" class="bg-light py-2 border-bottom shadow-sm">
   <div class="container d-flex justify-content-end align-items-center">
     <small class="text-muted me-2">
-      <i class="bi bi-person-circle"></i> Conectado como:
+      <i class="bi bi-person-circle text-primary"></i> Conectado como:
     </small>
-    <span class="badge rounded-pill" [ngClass]="userRole === 'ROLE_ADMIN' ? 'bg-danger' : 'bg-success'">
-      {{ userRole === 'ROLE_ADMIN' ? 'Administrador' : 'Socio Activo' }}
+    <span class="badge rounded-pill border"
+          [ngClass]="userRole === 'ROLE_ADMIN' ? 'bg-danger-subtle text-danger border-danger' : 'bg-success-subtle text-success border-success'">
+      {{ userRole === 'ROLE_ADMIN' ? 'Administrador del Mercado' : 'Socio Piurano' }}
     </span>
   </div>
 </div>

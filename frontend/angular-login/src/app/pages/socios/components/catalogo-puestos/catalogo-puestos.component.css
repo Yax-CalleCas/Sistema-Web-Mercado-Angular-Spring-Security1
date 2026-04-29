@@ -1,4 +1,188 @@
-/* Archivo de estilos para catalogo */
-.card-puesto {
-  transition: transform 0.3s;
+/* =========================
+   CONTENEDOR GENERAL
+========================= */
+.container-fluid {
+  background: #f6f8fb;
+  min-height: 100vh;
+}
+
+/* =========================
+   TITULOS
+========================= */
+h2 {
+  letter-spacing: -0.5px;
+}
+
+.h-1px {
+  height: 2px;
+  border-radius: 10px;
+}
+
+/* =========================
+   CARD FILTRO
+========================= */
+.card {
+  transition: all 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-3px);
+}
+
+/* =========================
+   TARJETAS DE PUESTOS
+========================= */
+.card-puesto-hover {
+  transition: all 0.35s ease;
+  cursor: pointer;
+}
+
+.card-puesto-hover:hover {
+  transform: translateY(-8px) scale(1.01);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08) !important;
+}
+
+/* =========================
+   IMAGENES
+========================= */
+.img-puesto {
+  height: 200px;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.card-puesto-hover:hover .img-puesto {
+  transform: scale(1.08);
+}
+
+/* =========================
+   BADGES
+========================= */
+.badge {
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+
+/* =========================
+   PRECIO
+========================= */
+.price-container {
+  background: linear-gradient(135deg, #f8fafc, #eef2f7);
+  border: none;
+  transition: all 0.3s ease;
+}
+
+.card-puesto-hover:hover .price-container {
+  transform: scale(1.03);
+}
+
+/* =========================
+   BOTONES
+========================= */
+.btn {
+  transition: all 0.25s ease;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #0d6efd, #4dabf7);
+  border: none;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(13, 110, 253, 0.3);
+}
+
+.btn-outline-info:hover {
+  background: #0dcaf0;
+  color: #fff;
+}
+
+/* =========================
+   PAGINACION PRO
+========================= */
+.pagination-custom .page-link {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  background: #fff;
+  color: #444;
+  border: none;
+  transition: all 0.3s ease;
+}
+
+.pagination-custom .page-link:hover {
+  background: #0d6efd;
+  color: #fff;
+  transform: translateY(-2px);
+}
+
+.pagination-custom .page-link.active {
+  background: linear-gradient(135deg, #0d6efd, #4dabf7);
+  color: #fff;
+  box-shadow: 0 6px 15px rgba(13, 110, 253, 0.4);
+}
+
+.page-item.disabled .page-link {
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+/* =========================
+   MODAL
+========================= */
+.modal-content {
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.bg-gradient-dark {
+  background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
+}
+
+/* =========================
+   SCROLL GALERIA
+========================= */
+.custom-scrollbar::-webkit-scrollbar {
+  height: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 10px;
+}
+
+/* =========================
+   EFECTOS EXTRA
+========================= */
+.pointer {
+  cursor: pointer;
+}
+
+.transition-all {
+  transition: all 0.3s ease;
+}
+
+.hover-up:hover {
+  transform: translateY(-3px);
+}
+
+/* =========================
+   EMPTY STATE
+========================= */
+.bg-light.rounded-circle {
+  background: linear-gradient(135deg, #f1f3f6, #e9edf3) !important;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+@media (max-width: 768px) {
+  .img-puesto {
+    height: 180px;
+  }
 }

@@ -1,8 +1,6 @@
 package com.cibertec.dsw1jwt.Jwt;
 
 import java.io.IOException;
-
-
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -10,6 +8,9 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+
+import io.jsonwebtoken.ExpiredJwtException;
+
 import org.springframework.util.StringUtils;
 
 import jakarta.servlet.FilterChain;
@@ -29,59 +30,56 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
 
-        //  Ignorar endpoints públicos
-    	String path = request.getServletPath();
-
-    	// 🔥 LIBERAR RUTAS PÚBLICAS
-    	if (
-    	    path.startsWith("/auth") ||
-    	    path.startsWith("/api/puestos")
-    	) {
-    	    filterChain.doFilter(request, response);
-    	    return;
-    	}
-
+        // 1. Obtener el token del header
         final String token = getTokenFromRequest(request);
+        final String username;
 
+        // 2. Si no hay token, pasamos al siguiente filtro (SecurityConfig decidirá si la ruta es pública o no)
         if (token == null) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        String username = jwtService.getUsernameFromToken(token);
+        try {
+            username = jwtService.getUsernameFromToken(token);
 
-        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+            // 3. Si el token tiene usuario y no hay autenticación activa en el contexto
+            if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
-            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+                // 4. Validar si el token sigue siendo íntegro y no ha expirado
+                if (jwtService.isTokenValid(token, userDetails)) {
+                    UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+                            userDetails,
+                            null,
+                            userDetails.getAuthorities()
+                    );
 
-            if (jwtService.isTokenValid(token, userDetails)) {
-
-                UsernamePasswordAuthenticationToken authToken =
-                        new UsernamePasswordAuthenticationToken(
-                                userDetails,
-                                null,
-                                userDetails.getAuthorities()
-                        );
-
-                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-
-                SecurityContextHolder.getContext().setAuthentication(authToken);
+                    authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    
+                    // 🚀 CLAVE: Establecemos la autenticación en el contexto global de Spring
+                    SecurityContextHolder.getContext().setAuthentication(authToken);
+                }
             }
+         // Dentro de doFilterInternal en JwtAuthenticationFilter.java
+        } catch (ExpiredJwtException e) {
+            System.err.println("Token expirado: " + e.getMessage());
+            // Opcional: Podrías enviar un error 401 directamente aquí si quisieras
+            filterChain.doFilter(request, response);
+            return;
+        } catch (Exception e) {
+            System.err.println("Fallo en la autenticación JWT: " + e.getMessage());
         }
-
         filterChain.doFilter(request, response);
     }
 
+    // Método auxiliar limpio para extraer el Bearer
     private String getTokenFromRequest(HttpServletRequest request) {
-        
-     // Dentro de doFilterInternal de JwtAuthenticationFilter.java
         final String authHeader = request.getHeader("Authorization");
-        System.out.println("Auth Header: " + authHeader); // Borrar después de probar
 
         if (StringUtils.hasText(authHeader) && authHeader.startsWith("Bearer ")) {
             return authHeader.substring(7);
         }
-
         return null;
     }
 }

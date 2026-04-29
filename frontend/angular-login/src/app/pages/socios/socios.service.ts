@@ -15,7 +15,11 @@ export class SocioService {
   listar(): Observable<Socio[]> {
     return this.http.get<Socio[]>(this.api);
   }
-
+// En socios.service.ts
+  buscarPorEmail(email: string): Observable<Socio> {
+    // Asegúrate que la ruta sea /me/ y no /search/
+    return this.http.get<Socio>(`${this.api}/me/${email}`);
+  }
 
   obtener(id: number): Observable<Socio> {
     return this.http.get<Socio>(`${this.api}/${id}`);

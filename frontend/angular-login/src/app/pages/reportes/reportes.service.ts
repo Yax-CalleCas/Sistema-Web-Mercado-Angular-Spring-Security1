@@ -1,22 +1,30 @@
-import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { environment } from 'src/environments/environment';
+import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { SocioReporteDTO } from "../../models/SocioReporteDTO";
 
 @Injectable({
   providedIn: 'root'
 })
 export class ReportesService {
+  private apiUrl = 'http://localhost:8080/api/v1/reportes';
 
-  private apiUrl = environment.urlHost + 'api/v1/reportes';
+  constructor(private http: HttpClient) { }
 
-  constructor(private http: HttpClient) {}
-
-  cajaDiaria(fecha: string): Observable<number> {
-    return this.http.get<number>(`${this.apiUrl}/caja-diaria?fecha=${fecha}`);
+  getDashboardStats(): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/dashboard`);
   }
 
-  deudasPorSocio(socioId: number): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/deudas-socio/${socioId}`);
+  getSociosReport(): Observable<SocioReporteDTO[]> {
+    return this.http.get<SocioReporteDTO[]>(`${this.apiUrl}/socios`);
+  }
+
+  // 🔥 NUEVOS MÉTODOS
+  guardarCierre(): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/guardar-cierre`, {});
+  }
+
+  getHistorialReportes(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/historial`);
   }
 }

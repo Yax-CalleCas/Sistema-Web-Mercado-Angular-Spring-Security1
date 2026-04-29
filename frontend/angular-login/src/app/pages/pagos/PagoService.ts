@@ -1,53 +1,63 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { PagoRequest } from "../../models/PagoRequest";
+import { Observable } from 'rxjs';
+import { Pago } from '../../models/Pago';
 
 @Injectable({
   providedIn: 'root'
 })
 export class PagosService {
-
-  private api = 'http://localhost:8080/api/pagos';
+  private apiUrl = 'http://localhost:8080/api/pagos';
 
   constructor(private http: HttpClient) {}
 
-  // 💳 Crear checkout (Stripe / MercadoPago)
-  crearCheckout(data: PagoRequest) {
-    return this.http.post<string>(`${this.api}/crear-checkout`, data);
+  /**
+   * Crea la sesión en Stripe. Recibe la URL como texto plano.
+   */
+  crearCheckout(request: any): Observable<string> {
+    return this.http.post(`${this.apiUrl}/crear-checkout`, request, {
+      responseType: 'text'
+    });
   }
 
-  // 📄 historial de pagos por socio
-  getPagosPorSocio(socioId: number) {
-    return this.http.get<any[]>(`${this.api}/socio/${socioId}`);
+  /**
+   * Confirma el pago al volver de la pasarela.
+   * Este método dispara la lógica automática en Java.
+   */
+  confirmarPago(sessionId: string): Observable<any> {
+    return this.http.get(`${this.apiUrl}/confirmar?session_id=${sessionId}`);
+  }
+  /**
+   * ADMIN: Listar todos los pagos que están en estado PENDIENTE
+   */
+  getPagosPendientes(): Observable<Pago[]> {
+    return this.http.get<Pago[]>(`${this.apiUrl}/pendientes`);
   }
 
-  // 🧾 historial por puesto (admin)
-  getPagosPorPuesto(puestoId: number) {
-    return this.http.get<any[]>(`${this.api}/puesto/${puestoId}`);
+  /**
+   * ADMIN: Aprobar manualmente un pago por su ID
+   */
+  aprobarPago(pagoId: number): Observable<any> {
+    return this.http.put(`${this.apiUrl}/${pagoId}/aprobar`, {});
+  }
+  /**
+   * Historial específico para el Socio logueado.
+   */
+  getPagosPorSocio(socioId: number): Observable<Pago[]> {
+    return this.http.get<Pago[]>(`${this.apiUrl}/socio/${socioId}`);
   }
 
-  // 🔥 ESTE ES EL QUE TE FALTABA (lo usas en SocioComponent)
-  alquilar(puestoId: number, socioId: number) {
-    const body = {
-      puestoId,
-      socioId
-    };
-
-    return this.http.post<any>(`${this.api}/alquilar`, body);
+  /**
+   * REPORTE AUDITORÍA: Obtiene todos los pagos registrados (Solo Admin).
+   */
+  getHistorialCompleto(): Observable<Pago[]> {
+    return this.http.get<Pago[]>(`${this.apiUrl}/historial-completo`);
   }
 
-  // 📊 opcional: pagos pendientes (útil para dashboard)
-  getPagosPendientes() {
-    return this.http.get<any[]>(`${this.api}/estado/PENDIENTE`);
-  }
-
-  // 📊 opcional: pagos aprobados
-  getPagosAprobados() {
-    return this.http.get<any[]>(`${this.api}/estado/APROBADO`);
-  }
-
-  // 🔎 buscar pago por transacción (webhook)
-  getPorTransaccion(transaccionId: string) {
-    return this.http.get<any>(`${this.api}/transaccion/${transaccionId}`);
+  /**
+   * Obtiene el total pagado por un socio (usado en las cards del dashboard).
+   */
+  getTotalSocio(socioId: number): Observable<number> {
+    return this.http.get<number>(`${this.apiUrl}/total-socio/${socioId}`);
   }
 }

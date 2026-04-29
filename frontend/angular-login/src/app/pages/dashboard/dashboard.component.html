@@ -1,68 +1,166 @@
-<div class="app-shell">
+<div class="app-shell animate__animated animate__fadeIn">
 
-  <main class="app-main">
+  <main class="app-main p-4">
 
-    <!-- TOPBAR SIMPLE -->
-    <header class="topbar">
-      <h1>Panel de Administración</h1>
-      <p>Gestión del sistema Mercado de Puestos Piura</p>
-    </header>
-    <div class="container mt-4">
+    <!-- HEADER -->
+    <header class="header-modern d-flex justify-content-between align-items-center mb-4">
 
-      <h2 class="mb-3">Dashboard Administrativo</h2>
-
-      <!-- USUARIO ACTUAL -->
-      <div class="alert alert-info" *ngIf="userLoginOn">
-        <strong>Usuario:</strong> {{ currentUser?.username }} |
-        <strong>Rol:</strong> {{ role }}
-        <button class="btn btn-danger btn-sm float-end" (click)="logout()">
-          Cerrar sesión
-        </button>
+      <div>
+        <h4 class="fw-bold mb-0">Panel de Administración</h4>
+        <small class="text-muted">Sistema de gestión del mercado</small>
       </div>
 
-      <!-- CARDS ESTADÍSTICAS -->
-      <div class="row mt-3">
+      <div *ngIf="userLoginOn && currentUser" class="d-flex align-items-center gap-3">
+
+        <div class="text-end">
+          <div class="fw-semibold">{{ currentUser.nombres }} {{ currentUser.apellidos }}</div>
+          <span class="badge bg-primary-subtle text-primary">{{ role }}</span>
+        </div>
+
+        <button class="btn btn-light btn-icon" (click)="logout()">
+          <i class="bi bi-box-arrow-right"></i>
+        </button>
+
+      </div>
+
+    </header>
+
+    <div class="container-fluid">
+
+      <!-- CARDS RESUMEN -->
+      <div class="row g-4 mb-4">
 
         <div class="col-md-4">
-          <div class="card text-white bg-primary mb-3">
-            <div class="card-body">
-              <h5>Total Usuarios</h5>
+          <div class="card card-modern bg-primary text-white">
+            <div>
+              <small>Total Usuarios</small>
               <h2>{{ totalUsers }}</h2>
             </div>
+            <div class="icon-box">
+              <i class="bi bi-people"></i>
+            </div>
           </div>
         </div>
 
         <div class="col-md-4">
-          <div class="card text-white bg-success mb-3">
-            <div class="card-body">
-              <h5>Usuarios Activos</h5>
+          <div class="card card-modern bg-success text-white">
+            <div>
+              <small>Usuarios Activos</small>
               <h2>{{ activeUsers }}</h2>
             </div>
+            <div class="icon-box">
+              <i class="bi bi-person-check"></i>
+            </div>
           </div>
         </div>
 
         <div class="col-md-4">
-          <div class="card text-white bg-danger mb-3">
-            <div class="card-body">
-              <h5>Usuarios Inactivos</h5>
+          <div class="card card-modern bg-danger text-white">
+            <div>
+              <small>Inactivos</small>
               <h2>{{ inactiveUsers }}</h2>
+            </div>
+            <div class="icon-box">
+              <i class="bi bi-person-x"></i>
             </div>
           </div>
         </div>
 
       </div>
 
-      <!-- SOLO ADMIN -->
-      <div *ngIf="role === 'ROLE_ADMIN'">
+      <!-- STATS ADMIN -->
+      <div class="row g-4 mb-4" *ngIf="role === 'ROLE_ADMIN' || role === 'ADMIN'">
 
-        <div class="alert alert-warning mt-3">
-          Panel de administración activo
+        <div class="col-md-6 col-lg-4">
+          <div class="card card-clean">
+            <div class="d-flex align-items-center gap-3">
+              <div class="icon-soft bg-primary-subtle text-primary">
+                <i class="bi bi-cash-stack"></i>
+              </div>
+              <div>
+                <small>Ingresos Totales</small>
+                <h5>S/ {{ stats.ingresosTotales | number:'1.2-2' }}</h5>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-6 col-lg-4">
+          <div class="card card-clean">
+            <div class="d-flex justify-content-between mb-2">
+              <small>Ocupación</small>
+              <span class="badge bg-light text-primary">
+                {{ stats.puestosOcupados }}/{{ stats.totalPuestos }}
+              </span>
+            </div>
+
+            <h5>{{ stats.porcentajeOcupacion | number:'1.0-1' }}%</h5>
+
+            <div class="progress mt-2" style="height:6px;">
+              <div class="progress-bar bg-primary"
+                   [style.width.%]="stats.porcentajeOcupacion"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-6 col-lg-4">
+          <div class="card card-clean">
+            <div class="d-flex align-items-center gap-3">
+              <div class="icon-soft bg-warning-subtle text-warning">
+                <i class="bi bi-lightning-charge"></i>
+              </div>
+              <div>
+                <small>Servicios</small>
+                <h5>S/ {{ stats.recaudacionServicios | number:'1.2-2' }}</h5>
+              </div>
+            </div>
+          </div>
         </div>
 
       </div>
-      <a routerLink="/admin/users" class="btn btn-primary">
-        Ir a Gestión de Usuarios
-      </a>
+
+      <!-- TABLA -->
+      <div class="card card-clean" *ngIf="role === 'ROLE_ADMIN' || role === 'ADMIN'">
+
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h6 class="fw-bold mb-0">
+            <i class="bi bi-bar-chart me-2"></i>Detalle por Concepto
+          </h6>
+
+          <button class="btn btn-sm btn-light" (click)="loadAdminData()">
+            <i class="bi bi-arrow-repeat"></i>
+          </button>
+        </div>
+
+        <div *ngIf="loading" class="text-center p-4">
+          <div class="spinner-border text-primary"></div>
+        </div>
+
+        <div class="table-responsive" *ngIf="!loading">
+          <table class="table align-middle">
+            <thead>
+            <tr class="text-muted small">
+              <th>CONCEPTO</th>
+              <th class="text-end">MONTO</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr *ngFor="let item of stats.porConcepto">
+              <td>
+                <i class="bi bi-tag me-2 text-primary"></i>
+                {{ item.concepto }}
+              </td>
+              <td class="text-end fw-bold text-success">
+                S/ {{ item.total | number:'1.2-2' }}
+              </td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+
     </div>
   </main>
 </div>

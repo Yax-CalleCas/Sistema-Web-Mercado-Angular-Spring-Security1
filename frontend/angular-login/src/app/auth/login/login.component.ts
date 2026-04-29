@@ -25,6 +25,7 @@ export class LoginComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    // Si ya tiene sesión, redirigir según su rol guardado
     if (this.loginService.isLoggedIn()) {
       this.redirectByRole();
     }
@@ -40,26 +41,37 @@ export class LoginComponent implements OnInit {
 
   login() {
     if (this.loginForm.valid) {
-
+      this.loginError = "";
       const credentials = this.loginForm.getRawValue() as LoginRequest;
 
       this.loginService.login(credentials).subscribe({
         next: () => {
-          this.loginError = "";
-
-          // 🔥 REDIRECCIÓN INMEDIATA (no depende del backend extra)
-          this.redirectByRole();
-
-          // 🔥 CARGA DE PERFIL SIN BLOQUEAR
-          this.loginService.loadSocio().subscribe({
-            next: () => {},
-            error: (err) => {
-              console.warn("No se pudo cargar el socio", err);
-            }
-          });
+          // 1. Identificamos el rol apenas logueamos
+          if (this.loginService.isAdmin()) {
+            // Es ADMIN: No buscamos perfil de socio, vamos directo al dashboard
+            this.router.navigate(['/dashboard']);
+          }
+          else if (this.loginService.isUser()) {
+            // Es SOCIO: Intentamos cargar su perfil de socio
+            this.loginService.loadSocio().subscribe({
+              next: () => {
+                // Perfil cargado con éxito, vamos a su panel
+                this.router.navigate(['/mi-panel-socio']);
+              },
+              error: (err) => {
+                // El usuario existe pero no tiene registro en la tabla de SOCIOS
+                console.error("Error: Usuario sin perfil de socio", err);
+                this.loginError = "No se encontró un perfil de socio vinculado a esta cuenta.";
+                this.loginService.logout(); // Opcional: Cerrar sesión si el perfil es obligatorio
+              }
+            });
+          } else {
+            this.router.navigate(['/']);
+          }
         },
-        error: () => {
-          this.loginError = "Credenciales incorrectas.";
+        error: (error) => {
+          // Si el error viene del interceptor con un mensaje personalizado, lo usamos
+          this.loginError = error.message || "Credenciales incorrectas.";
         }
       });
 

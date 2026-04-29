@@ -1,61 +1,72 @@
 <div class="container py-4 animate__animated animate__fadeIn">
 
-  <!-- HEADER -->
-  <div class="card border-0 shadow-sm rounded-4 bg-primary text-white p-4 mb-4">
-    <div class="d-flex align-items-center justify-content-between">
+  <div *ngIf="loading" class="text-center py-5">
+    <div class="spinner-border text-primary" role="status"></div>
+    <p class="mt-2 text-muted">Cargando tu panel de socio...</p>
+  </div>
 
-      <div class="d-flex align-items-center">
-        <img [src]="socioActual?.fotoUrl || 'https://ui-avatars.com/api/?name='+socioActual?.nombres"
-             class="rounded-circle border border-3 border-white"
-             width="70">
-
-        <div class="ms-3">
-          <h2 class="fw-bold mb-0">
-            Panel de {{ socioActual?.nombres }}
-          </h2>
-          <p class="mb-0 opacity-75">
-            Gestiona tus puestos y recibos del mercado
-          </p>
-        </div>
+  <div *ngIf="!loading && socioActual">
+    <div class="card border-0 shadow-lg rounded-4 bg-primary text-white p-4 mb-4 overflow-hidden position-relative">
+      <div class="position-absolute top-0 end-0 p-3 opacity-25">
+        <i class="bi bi-person-workspace" style="font-size: 6rem;"></i>
       </div>
 
-      <button class="btn btn-outline-light rounded-pill"
-              (click)="logout()">
-        <i class="bi bi-box-arrow-right"></i> Salir
+      <div class="d-flex align-items-center justify-content-between position-relative">
+        <div class="d-flex align-items-center">
+          <div class="position-relative">
+            <img [src]="socioActual?.fotoUrl || 'https://ui-avatars.com/api/?name='+socioActual?.nombres"
+                 class="rounded-circle border border-4 border-white shadow"
+                 width="80" height="80">
+            <span class="position-absolute bottom-0 end-0 bg-success border border-2 border-white rounded-circle p-2" title="En línea"></span>
+          </div>
+
+          <div class="ms-4">
+            <h2 class="fw-bold mb-0">¡Hola, {{ socioActual?.nombres }}!</h2>
+            <p class="mb-0 opacity-75">
+              <i class="bi bi-patch-check-fill me-1"></i> Socio Registrado | DNI: {{ socioActual?.dni }}
+            </p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <nav class="nav nav-pills nav-fill gap-3 p-2 bg-white border rounded-4 shadow-sm mb-4">
+      <button class="nav-link rounded-3 fw-bold py-3"
+              [class.active]="tab === 'catalogo'"
+              (click)="setTab('catalogo')">
+        <i class="bi bi-shop me-2 fs-5"></i> Catálogo de Puestos
       </button>
+
+      <button class="nav-link rounded-3 fw-bold py-3"
+              [class.active]="tab === 'recibos'"
+              (click)="setTab('recibos')">
+        <i class="bi bi-receipt-cutoff me-2 fs-5"></i> Mis Pagos y Recibos
+      </button>
+    </nav>
+
+    <div [ngSwitch]="tab" class="animate__animated animate__fadeInUp">
+
+      <div *ngSwitchCase="'catalogo'">
+        <app-catalogo-puestos [socioActual]="socioActual"></app-catalogo-puestos>
+      </div>
+
+      <div *ngSwitchCase="'recibos'">
+        <app-mis-recibos [socioActual]="socioActual"></app-mis-recibos>
+      </div>
 
     </div>
   </div>
 
-  <!-- TABS -->
-  <nav class="nav nav-pills nav-fill gap-2 p-1 small bg-white border rounded-4 shadow-sm mb-4">
-
-    <button class="nav-link rounded-3 fw-bold"
-            [class.active]="tab === 'catalogo'"
-            (click)="tab = 'catalogo'">
-      <i class="bi bi-shop me-2"></i> Catálogo de Puestos
-    </button>
-
-    <button class="nav-link rounded-3 fw-bold"
-            [class.active]="tab === 'recibos'"
-            (click)="tab = 'recibos'">
-      <i class="bi bi-receipt-cutoff me-2"></i> Mis Recibos
-    </button>
-
-  </nav>
-
-  <!-- CONTENIDO -->
-  <div [ngSwitch]="tab">
-
-    <!-- CATALOGO -->
-    <app-catalogo-puestos
-      *ngSwitchCase="'catalogo'"
-      [socioActual]="socioActual">
-    </app-catalogo-puestos>
-
-    <!-- RECIBOS -->
-  
-
+  <div *ngIf="!loading && !socioActual" class="alert alert-danger rounded-4 shadow-sm animate__animated animate__shakeX">
+    <div class="d-flex align-items-center">
+      <i class="bi bi-exclamation-octagon-fill fs-1 me-3"></i>
+      <div>
+        <h5 class="fw-bold mb-1">Sesión no encontrada</h5>
+        <p class="mb-0">No pudimos vincular tu cuenta con los datos de socio. Por favor, intenta cerrar sesión e ingresar de nuevo.</p>
+        <button class="btn btn-danger mt-2 rounded-pill px-4" (click)="logout()">Ir al Login</button>
+      </div>
+    </div>
   </div>
 
 </div>

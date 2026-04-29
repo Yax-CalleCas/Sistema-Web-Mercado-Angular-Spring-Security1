@@ -1,195 +1,625 @@
 <div class="container mt-5 animate__animated animate__fadeIn">
 
+
+
   <div class="header-section d-flex justify-content-between align-items-center mb-4 p-4 shadow-sm rounded-4 bg-white">
+
     <div>
+
       <h2 class="title-gradient mb-0">Gestión de Puestos</h2>
+
       <p class="text-muted small mb-0">Administra los espacios físicos, categorías y costos mensuales</p>
+
     </div>
-    <span class="count-badge">{{ totalElements }} Puestos Totales</span>
+
+    <span class="count-badge bg-primary text-white px-3 py-2 rounded-pill shadow-sm">
+
+{{ totalElements }} Puestos Totales
+
+</span>
+
   </div>
+
+
 
   <div class="card border-0 shadow-sm rounded-4 mb-5 overflow-hidden">
+
     <div class="card-header bg-white py-3 border-0">
+
       <h5 class="fw-bold mb-0" [ngClass]="editMode ? 'text-warning' : 'text-primary'">
+
         <i class="bi me-2" [ngClass]="editMode ? 'bi-pencil-square' : 'bi-plus-circle-fill'"></i>
+
         {{ editMode ? 'Actualizar Información del Puesto' : 'Registrar Nuevo Espacio' }}
+
       </h5>
+
     </div>
+
     <div class="card-body bg-light-soft">
+
       <form [formGroup]="form" (ngSubmit)="guardar()">
+
         <div class="row g-3">
+
+
+
           <div class="col-md-2">
+
             <label class="form-label small fw-bold">Código</label>
+
             <input class="form-control shadow-sm" formControlName="codigo" placeholder="Ej: P-101">
+
           </div>
 
+
+
           <div class="col-md-3">
+
             <label class="form-label small fw-bold text-primary">Categoría</label>
+
             <select class="form-select shadow-sm" formControlName="categoria">
+
               <option value="" disabled>Seleccione...</option>
+
               <option value="Abarrotes">Abarrotes</option>
+
               <option value="Comida">Comida / Restaurante</option>
+
               <option value="Ropa">Ropa y Calzado</option>
+
               <option value="Ferretería">Ferretería</option>
+
               <option value="Servicios">Servicios</option>
+
               <option value="Otros">Otros</option>
+
             </select>
+
           </div>
 
+
+
           <div class="col-md-3">
+
             <label class="form-label small fw-bold">Ubicación</label>
+
             <input class="form-control shadow-sm" formControlName="ubicacion" placeholder="Ej: Zona A - Piso 1">
+
           </div>
+
+
 
           <div class="col-md-4">
+
             <label class="form-label small fw-bold text-indigo">Asignar Socio (Dueño)</label>
+
             <select class="form-select shadow-sm border-primary-subtle" formControlName="socioId">
+
               <option [ngValue]="null">-- Sin asignar (Disponible) --</option>
+
               <option *ngFor="let s of socios" [ngValue]="s.id">
-                {{ s.nombres }} {{ s.apellidos }} - DNI: {{ s.dni }}
+
+                {{ s.nombres }} {{ s.apellidos }}
+
               </option>
+
             </select>
+
           </div>
 
-          <div class="col-md-3">
+
+
+          <div class="col-md-6 mb-3">
+
+            <label class="form-label fw-bold">Estado del Puesto</label>
+
+            <select formControlName="estado" class="form-select border-primary shadow-sm">
+
+              <option value="DISPONIBLE">🟢 Disponible (Para venta)</option>
+
+              <option value="MANTENIMIENTO">🟠 En Mantenimiento (Bloqueado)</option>
+
+              <option value="OCUPADO">🔴 Ocupado (Ya tiene socio)</option>
+
+            </select>
+
+            <div class="form-text">Si pones mantenimiento, no aparecerá en el catálogo de clientes.</div>
+
+          </div>
+
+
+
+          <div class="col-md-6 mb-3">
+
+            <label class="form-label fw-bold">Visibilidad</label>
+
+            <div class="form-check form-switch mt-2">
+
+              <input class="form-check-input" type="checkbox" formControlName="activo" id="checkActivo">
+
+              <label class="form-check-label" for="checkActivo">
+
+                {{ form.get('activo')?.value ? 'Puesto Activo' : 'Puesto Desactivado / Oculto' }}
+
+              </label>
+
+            </div>
+
+          </div>
+
+
+
+          <div class="col-md-2">
+
             <label class="form-label small fw-bold">Precio Alquiler (S/.)</label>
+
             <input class="form-control shadow-sm border-success" type="number" formControlName="precioAlquiler">
+
           </div>
 
-          <div class="col-md-5">
+
+
+          <div class="col-md-4">
+
             <label class="form-label small fw-bold">URL Imagen</label>
+
             <input class="form-control shadow-sm" formControlName="imagenUrl" placeholder="https://...">
+
           </div>
+
+
+
+          <div class="col-md-3 d-flex align-items-center">
+
+            <div class="form-check form-switch mt-3">
+
+              <input type="checkbox" class="form-check-input" id="checkActivo" formControlName="activo">
+
+              <label class="form-check-label fw-bold ms-2" for="checkActivo">Puesto Activo</label>
+
+            </div>
+
+          </div>
+
+
 
           <div class="col-md-4 d-flex align-items-center">
-            <div class="form-check form-switch mt-3">
-              <input type="checkbox" class="form-check-input" id="servInc" formControlName="serviciosIncluidos">
-              <label class="form-check-label fw-bold ms-2" for="servInc">Servicios Incluidos</label>
-            </div>
-          </div>
 
-          <div class="col-md-2" *ngIf="!form.get('serviciosIncluidos')?.value">
-            <label class="form-label small fw-bold text-info">Costo Agua</label>
-            <input class="form-control shadow-sm" type="number" formControlName="costoAguaFijo">
-          </div>
-
-          <div class="col-md-2" *ngIf="!form.get('serviciosIncluidos')?.value">
-            <label class="form-label small fw-bold text-warning">Costo Luz</label>
-            <input class="form-control shadow-sm" type="number" formControlName="costoLuzFijo">
-          </div>
-
-          <div class="col-12 d-flex justify-content-between align-items-center mt-3">
             <div class="form-check form-switch">
-              <input type="checkbox" class="form-check-input" id="checkAsoc" formControlName="esAsociacion">
-              <label class="form-check-label fw-semibold" for="checkAsoc">Bajo administración de Asociación</label>
+
+              <input type="checkbox" class="form-check-input" id="servInc" formControlName="serviciosIncluidos">
+
+              <label class="form-check-label fw-bold ms-2" for="servInc">Servicios Incluidos (Agua/Luz)</label>
+
             </div>
-            <div class="d-flex gap-2">
-              <button type="button" class="btn btn-outline-secondary px-4" (click)="reset()">Limpiar</button>
-              <button type="submit" class="btn btn-primary-modern px-5 shadow" [disabled]="form.invalid">
-                <i class="bi bi-save me-2"></i>
-                {{ editMode ? 'Guardar Cambios' : 'Crear Puesto' }}
-              </button>
-            </div>
+
           </div>
+
+
+
+          <div class="col-md-2" *ngIf="!form.get('serviciosIncluidos')?.value">
+
+            <label class="form-label small fw-bold text-info">Costo Agua Fijo</label>
+
+            <input class="form-control shadow-sm" type="number" formControlName="costoAguaFijo">
+
+          </div>
+
+
+
+          <div class="col-md-2" *ngIf="!form.get('serviciosIncluidos')?.value">
+
+            <label class="form-label small fw-bold text-warning">Costo Luz Fijo</label>
+
+            <input class="form-control shadow-sm" type="number" formControlName="costoLuzFijo">
+
+          </div>
+
+          <div class="col-12 mb-3">
+
+            <label class="form-label fw-bold">Descripción Detallada</label>
+
+            <textarea formControlName="descripcion" class="form-control border-primary shadow-sm"
+
+                      rows="4" placeholder="Escribe detalles sobre el material, ventajas, puntos de referencia..."></textarea>
+
+          </div>
+
+
+
+          <div class="col-12 mb-3">
+
+            <label class="form-label fw-bold">Galería de Fotos (URLs separadas por comas)</label>
+
+            <input type="text" formControlName="fotosGaleria" class="form-control border-primary shadow-sm"
+
+                   placeholder="https://foto1.jpg, https://foto2.jpg">
+
+            <div class="form-text small text-muted">Pega los enlaces de las imágenes del puesto.</div>
+
+          </div>
+
+          <div class="col-12 d-flex justify-content-between align-items-center mt-4">
+
+            <div class="form-check form-switch">
+
+              <input type="checkbox" class="form-check-input" id="checkAsoc" formControlName="esAsociacion">
+
+              <label class="form-check-label fw-semibold" for="checkAsoc">Bajo administración de Asociación</label>
+
+            </div>
+
+            <div class="d-flex gap-2">
+
+              <button type="button" class="btn btn-outline-secondary px-4 rounded-3" (click)="reset()">Limpiar</button>
+
+              <button type="submit" class="btn btn-primary px-5 shadow rounded-3" [disabled]="form.invalid">
+
+                <i class="bi bi-save me-2"></i>
+
+                {{ editMode ? 'Guardar Cambios' : 'Crear Puesto' }}
+
+              </button>
+
+            </div>
+
+          </div>
+
         </div>
+
       </form>
+
     </div>
+
   </div>
+
+
 
   <div class="row g-4">
+
     <div class="col-md-6 col-lg-4" *ngFor="let p of puestos">
+
       <div class="card-puesto border-0 shadow-sm rounded-4 h-100 bg-white overflow-hidden">
 
+
+
         <div class="position-relative">
+
           <img [src]="p.imagenUrl || 'https://images.unsplash.com/photo-1534452203293-494d7ddbf7e0?q=80&w=500'"
-               class="card-img-puesto" alt="Puesto">
+
+               class="card-img-puesto" style="height: 180px; object-fit: cover; width: 100%;">
+
+
 
           <div class="status-badges position-absolute top-0 end-0 p-3 d-flex flex-column gap-2 align-items-end">
-            <span class="badge shadow-sm" [ngClass]="p.socio ? 'bg-danger' : 'bg-success'">
-              {{ p.socio ? 'Ocupado' : 'Disponible' }}
-            </span>
-            <span class="badge bg-dark-subtle text-dark shadow-sm">
-              <i class="bi bi-tag-fill me-1"></i> {{ p.categoria }}
-            </span>
+
+<span class="badge shadow-sm"
+
+      [ngClass]="{
+
+'bg-success': p.estado === 'DISPONIBLE',
+
+'bg-danger': p.estado === 'OCUPADO',
+
+'bg-warning text-dark': p.estado === 'MANTENIMIENTO'
+
+}">
+
+{{ p.estado }}
+
+</span>
+
+            <span class="badge bg-dark-subtle text-dark shadow-sm" *ngIf="!p.activo">INACTIVO</span>
+
           </div>
+
+
 
           <div class="code-overlay position-absolute bottom-0 start-0 p-3 w-100">
+
             <h5 class="text-white fw-bold mb-0">{{ p.codigo }}</h5>
+
           </div>
+
         </div>
+
+
 
         <div class="card-body p-4">
-          <div class="d-flex align-items-center mb-3">
-            <i class="bi bi-cash-coin text-success me-2 fs-5"></i>
-            <span class="fw-bold fs-5 text-dark">S/. {{ p.precioAlquiler | number:'1.2-2' }}</span>
+
+          <div class="d-flex justify-content-between align-items-center mb-3">
+
+            <span class="fw-bold fs-5 text-dark">S/ {{ p.precioAlquiler | number:'1.2-2' }}</span>
+
+            <span class="badge bg-light text-dark border">{{ p.categoria }}</span>
+
           </div>
+
+
 
           <p class="text-muted small mb-3">
+
             <i class="bi bi-geo-alt-fill me-1 text-primary"></i> {{ p.ubicacion }}
+
           </p>
 
+
+
           <div class="p-3 rounded-3 bg-light mb-4 border-start border-4"
+
                [ngClass]="p.serviciosIncluidos ? 'border-success' : 'border-warning'">
+
             <div class="d-flex justify-content-between small">
+
               <span class="text-muted">Servicios:</span>
+
               <span [class]="p.serviciosIncluidos ? 'text-success fw-bold' : 'text-danger'">
-                {{ p.serviciosIncluidos ? 'Incluidos' : 'Por separado' }}
-              </span>
+
+{{ p.serviciosIncluidos ? 'Incluidos' : 'Por separado' }}
+
+</span>
+
             </div>
+
             <div class="d-flex justify-content-between mt-2 extra-small text-muted" *ngIf="!p.serviciosIncluidos">
+
               <span><i class="bi bi-droplet-fill text-info"></i> S/{{p.costoAguaFijo}}</span>
+
               <span><i class="bi bi-lightning-charge-fill text-warning"></i> S/{{p.costoLuzFijo}}</span>
+
             </div>
+
           </div>
 
-          <div class="socio-info p-2 rounded-3 bg-light-blue" *ngIf="p.socio">
+
+
+          <div class="socio-info p-2 rounded-3 bg-light" *ngIf="p.socio">
+
             <div class="d-flex align-items-center">
-              <i class="bi bi-person-badge text-indigo me-2"></i>
-              <span class="fw-semibold text-indigo small">{{ p.socio.nombres }} {{ p.socio.apellidos }}</span>
+
+              <i class="bi bi-person-badge text-primary me-2"></i>
+
+              <span class="fw-semibold text-dark small">{{ p.socio.nombres }} {{ p.socio.apellidos }}</span>
+
             </div>
+
           </div>
+
           <div class="p-2 rounded-3 bg-gray-100 text-center" *ngIf="!p.socio">
-            <span class="text-muted extra-small italic">Sin socio asignado</span>
+
+            <span class="text-muted small italic">Sin socio asignado</span>
+
           </div>
+
         </div>
+
+
 
         <div class="card-footer bg-white border-0 p-4 pt-0 d-flex gap-2">
-          <button class="btn btn-outline-warning w-100 rounded-3 fw-bold" (click)="editar(p)">
+
+          <button class="btn btn-outline-info rounded-3" (click)="verDetalle(p)" title="Ver detalles">
+
+            <i class="bi bi-eye-fill"></i>
+
+          </button>
+
+
+
+          <button class="btn btn-outline-warning w-100 rounded-3" (click)="editar(p)">
+
             <i class="bi bi-pencil-fill"></i>
+
           </button>
-          <button class="btn btn-outline-danger w-100 rounded-3 fw-bold" (click)="eliminar(p.id!)">
+
+          <button class="btn btn-outline-danger w-100 rounded-3" (click)="eliminar(p.id!)">
+
             <i class="bi bi-trash3-fill"></i>
+
           </button>
+
         </div>
+
       </div>
+
     </div>
+
   </div>
 
-  <div class="d-flex justify-content-between align-items-center mt-5 mb-5 bg-white p-4 rounded-4 shadow-sm">
+  <div class="modal fade" id="detalleModal" tabindex="-1" aria-hidden="true">
+
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+
+      <div class="modal-content border-0 shadow-lg rounded-4">
+
+        <div class="modal-header border-0 pb-0">
+
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+
+        </div>
+
+        <div class="modal-body p-4" *ngIf="puestoSeleccionado">
+
+          <div class="row">
+
+
+
+
+
+            <div class="col-md-6">
+
+              <div class="gallery-container">
+
+                <div class="main-image-wrapper position-relative overflow-hidden rounded-4 mb-3 shadow">
+
+                  <img [src]="puestoSeleccionado.imagenUrl" class="img-fluid w-100 main-img-zoom" style="height: 320px; object-fit: cover;">
+
+                  <div class="image-overlay-badge position-absolute bottom-0 start-0 m-3 px-3 py-1 rounded-pill">
+
+                    <i class="bi bi-camera-fill me-2"></i> Foto Principal
+
+                  </div>
+
+                </div>
+
+
+
+                <h6 class="fw-bold small text-muted text-uppercase mb-3 letter-spacing-1">Galería de Espacios</h6>
+
+                <div class="modern-grid-gallery">
+
+                  <div *ngFor="let url of fotosArray" class="gallery-item rounded-3 overflow-hidden shadow-sm">
+
+                    <img [src]="url.trim()" (click)="cambiarFotoPrincipal(url.trim())" class="img-grid pointer">
+
+                  </div>
+
+                  <div *ngIf="fotosArray.length === 0" class="empty-photo-placeholder rounded-3 d-flex align-items-center justify-content-center">
+
+                    <i class="bi bi-images text-muted fs-4"></i>
+
+                  </div>
+
+                </div>
+
+              </div>
+
+            </div>
+
+
+
+            <div class="col-md-7">
+
+              <span class="badge bg-primary-subtle text-primary mb-2">{{ puestoSeleccionado.categoria }}</span>
+
+              <h2 class="fw-bold text-dark mb-1">{{ puestoSeleccionado.codigo }}</h2>
+
+              <p class="text-muted mb-3"><i class="bi bi-geo-alt-fill me-1"></i> {{ puestoSeleccionado.ubicacion }}</p>
+
+
+
+              <div class="bg-light p-3 rounded-4 mb-3">
+
+                <h6 class="fw-bold small mb-1">Descripción</h6>
+
+                <p class="mb-0 text-secondary" style="white-space: pre-line;">
+
+                  {{ puestoSeleccionado.descripcion || 'Sin descripción detallada disponible.' }}
+
+                </p>
+
+              </div>
+
+
+
+              <div class="row g-2">
+
+                <div class="col-6">
+
+                  <div class="p-2 border rounded-3 text-center">
+
+                    <span class="d-block small text-muted">Precio Alquiler</span>
+
+                    <span class="fw-bold">S/ {{ puestoSeleccionado.precioAlquiler }}</span>
+
+                  </div>
+
+                </div>
+
+                <div class="col-6">
+
+                  <div class="p-2 border rounded-3 text-center">
+
+                    <span class="d-block small text-muted">Estado</span>
+
+                    <span class="fw-bold" [ngClass]="puestoSeleccionado.estado === 'DISPONIBLE' ? 'text-success' : 'text-danger'">
+
+{{ puestoSeleccionado.estado }}
+
+</span>
+
+                  </div>
+
+                </div>
+
+              </div>
+
+
+
+              <div class="mt-3 p-3 rounded-4 border-start border-4 border-info bg-info-subtle" *ngIf="puestoSeleccionado.socio">
+
+                <h6 class="fw-bold small mb-1 text-info-emphasis">Socio Propietario</h6>
+
+                <p class="mb-0 small fw-semibold">{{ puestoSeleccionado.socio.nombres }} {{ puestoSeleccionado.socio.apellidos }}</p>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+        <div class="modal-footer border-0 p-4 pt-0">
+
+          <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">Cerrar</button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <div class="d-flex justify-content-between align-items-center mt-5 mb-5 bg-white p-4 rounded-4 shadow-sm border">
+
     <span class="text-muted small">Mostrando página <b>{{ currentPage + 1 }}</b> de <b>{{ totalPages }}</b></span>
 
+
+
     <nav aria-label="Page navigation">
+
       <ul class="pagination mb-0 gap-1">
+
         <li class="page-item">
+
           <button class="page-link rounded-circle border-0" [disabled]="isFirst" (click)="cambiarPagina(currentPage - 1)">
+
             <i class="bi bi-chevron-left"></i>
+
           </button>
+
         </li>
 
         <li class="page-item" *ngFor="let n of paginas">
+
           <button class="page-link rounded-circle border-0 mx-1"
-                  [class.active-page]="n === currentPage"
+
+                  [class.active]="n === currentPage"
+
                   (click)="cambiarPagina(n)">
+
             {{ n + 1 }}
+
           </button>
+
         </li>
 
         <li class="page-item">
+
           <button class="page-link rounded-circle border-0" [disabled]="isLast" (click)="cambiarPagina(currentPage + 1)">
+
             <i class="bi bi-chevron-right"></i>
+
           </button>
+
         </li>
+
       </ul>
+
     </nav>
+
   </div>
+
 </div>

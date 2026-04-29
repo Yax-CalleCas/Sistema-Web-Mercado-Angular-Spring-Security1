@@ -9,7 +9,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
-import com.cibertec.dsw1jwt.User.User;
+import com.cibertec.dsw1jwt.models.User;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
@@ -18,19 +18,21 @@ import io.jsonwebtoken.security.Keys;
 @Service
 public class JwtService {
 
+    // Clave de 256 bits segura
     private static final String SECRET_KEY = "586E3272357538782F413F4428472B4B6250655368566B597033733676397924";
 
     public String getToken(UserDetails userDetails) {
         User user = (User) userDetails;
 
         Map<String, Object> claims = new HashMap<>();
+        // Guardamos los roles como una lista de Strings
         claims.put("roles",
                 user.getAuthorities()
                         .stream()
                         .map(GrantedAuthority::getAuthority)
                         .collect(Collectors.toList())
         );
-        claims.put("userId", user.getId()); // 🔥 CLAVE
+        claims.put("userId", user.getId()); 
 
         return buildToken(claims, user);
     }
@@ -39,7 +41,8 @@ public class JwtService {
         return Jwts.builder()
                 .setClaims(extraClaims)
                 .setSubject(user.getUsername())
-                .setIssuedAt(new Date())
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                // Expiración de 10 horas
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10))
                 .signWith(getKey(), SignatureAlgorithm.HS256)
                 .compact();
@@ -55,7 +58,8 @@ public class JwtService {
     }
 
     public <T> T getClaim(String token, Function<Claims, T> resolver) {
-        return resolver.apply(getAllClaims(token));
+        final Claims claims = getAllClaims(token);
+        return resolver.apply(claims);
     }
 
     private Claims getAllClaims(String token) {
@@ -68,7 +72,7 @@ public class JwtService {
 
     public boolean isTokenValid(String token, UserDetails userDetails) {
         final String username = getUsernameFromToken(token);
-        return username.equals(userDetails.getUsername()) && !isTokenExpired(token);
+        return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
     }
 
     private boolean isTokenExpired(String token) {

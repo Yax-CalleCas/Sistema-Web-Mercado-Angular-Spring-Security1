@@ -6,6 +6,8 @@ import { environment } from 'src/environments/environment';
 export interface UserDTO {
   id?: number;
   username: string;
+  nombres: string;   // ⬅️ Obligatorio para el dashboard
+  apellidos: string; // ⬅️ Obligatorio para el dashboard
   password?: string;
   role: string;
   enabled: boolean;
@@ -20,7 +22,16 @@ export class UserService {
 
   constructor(private http: HttpClient) { }
 
-  // ✅ getMe CORREGIDO: Ahora retorna el Observable
+  /**
+   * ✅ METODO getUser COMPLETADO
+   * Importante: Retornamos Observable<UserDTO> para que el componente lo reconozca.
+   */
+  getUser(username: string): Observable<UserDTO> {
+    return this.http.get<UserDTO>(`${this.apiUrl}/search/${username}`).pipe(
+      catchError(this.handleError)
+    );
+  }
+
   getMe(): Observable<UserDTO> {
     return this.http.get<UserDTO>(`${this.apiUrl}/me`).pipe(
       catchError(this.handleError)

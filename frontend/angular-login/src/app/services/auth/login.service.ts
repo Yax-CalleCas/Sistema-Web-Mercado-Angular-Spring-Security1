@@ -1,9 +1,9 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, BehaviorSubject, throwError, of } from 'rxjs';
-import { tap, catchError } from 'rxjs/operators';
+import { tap, catchError, map } from 'rxjs/operators';
 import { jwtDecode } from 'jwt-decode';
-import {LoginRequest} from "./loginRequest";
+import { LoginRequest } from "./loginRequest";
 
 @Injectable({
   providedIn: 'root'
@@ -12,29 +12,31 @@ export class LoginService {
 
   private url = 'http://localhost:8080/auth/login';
   private registerUrl = 'http://localhost:8080/auth/register';
-  private socioUrl = 'http://localhost:8080/api/v1/socios/me';
+  private socioUrl = 'http://localhost:8080/api/v1/socios'; // Ajustado para ser dinámico
 
-  constructor(private http: HttpClient) {
-    // inicializa estado al cargar app
-    this.currentUserLoginOn.next(this.hasToken());
-    this.currentUserRole.next(this.getRoleFromToken());
-  }
+  // BehaviorSubjects para mantener el estado reactivo
+  private currentUserLoginOn = new BehaviorSubject<boolean>(this.hasToken());
+  private currentUserRole = new BehaviorSubject<string>(this.getRoleFromToken());
 
-  private currentUserLoginOn = new BehaviorSubject<boolean>(false);
-  private currentUserRole = new BehaviorSubject<string>('');
+  constructor(private http: HttpClient) { }
 
   // =========================
-  // 🔐 LOGIN
+  // 🔐 LOGIN (Sincronizado)
   // =========================
 
   login(credentials: LoginRequest): Observable<any> {
     return this.http.post<any>(this.url, credentials).pipe(
       tap((res) => {
         if (res?.token) {
+          // 1. Guardar en almacenamiento físico inmediatamente
           sessionStorage.setItem("token", res.token);
 
+          // 2. Notificar a los observadores (Esto dispara los Guards y Redirecciones)
           this.currentUserLoginOn.next(true);
-          this.currentUserRole.next(this.getRoleFromToken());
+          const role = this.getRoleFromToken();
+          this.currentUserRole.next(role);
+
+          console.log("Login exitoso. Rol detectado:", role);
         }
       }),
       catchError(this.handleError)
@@ -42,39 +44,44 @@ export class LoginService {
   }
 
   // =========================
-  // 👤 SOCIO
+  // 👤 SOCIO (Carga perfil por email/sub)
   // =========================
 
   loadSocio(): Observable<any> {
     const user = this.getUserFromToken();
 
-    if (!user?.sub) {
-      console.warn("Token sin 'sub'");
+    if (!user || !user.sub) {
       return of(null);
     }
 
-    return this.http.get(`${this.socioUrl}/${user.sub}`).pipe(
+    // Usamos el 'sub' (email) para buscar los datos del socio
+    return this.http.get(`${this.socioUrl}/search/${user.sub}`).pipe(
       tap((socio) => {
         localStorage.setItem("usuario", JSON.stringify(socio));
       }),
       catchError((err) => {
-        console.warn("Error cargando socio", err);
-        return of(null); // 🔥 evita romper el flujo
+        console.error("Error cargando perfil de socio:", err);
+        return of(null);
       })
     );
   }
 
   // =========================
-  // 📝 REGISTER
+  // 📝 REGISTRO
   // =========================
 
   register(data: any): Observable<any> {
-    return this.http.post<any>(this.registerUrl, data)
-      .pipe(catchError(this.handleError));
+    return this.http.post<any>(this.registerUrl, data).pipe(
+      catchError(this.handleError)
+    );
   }
 
+  // =========================
+  // 🚪 LOGOUT
+  // =========================
+
   logout(): void {
-    sessionStorage.clear();
+    sessionStorage.removeItem("token");
     localStorage.removeItem("usuario");
 
     this.currentUserLoginOn.next(false);
@@ -82,35 +89,44 @@ export class LoginService {
   }
 
   // =========================
-  // 🧠 TOKEN
+  // 🧠 LÓGICA DE TOKEN
   // =========================
 
   getUserFromToken(): any {
     const token = sessionStorage.getItem("token");
-    if (!token) return null;
+    if (!token || token === "undefined") return null;
 
     try {
       return jwtDecode(token);
-    } catch {
+    } catch (e) {
+      console.error("Error decodificando JWT:", e);
       return null;
     }
   }
 
   getRoleFromToken(): string {
     const user = this.getUserFromToken();
-    return user?.roles ? user.roles[0] : '';
+    if (!user) return '';
+
+    // Soporta tanto 'roles' (lista) como 'role' (string único)
+    if (Array.isArray(user.roles) && user.roles.length > 0) {
+      return user.roles[0];
+    }
+    return user.role || '';
   }
 
   isAdmin(): boolean {
-    return this.getRoleFromToken() === 'ROLE_ADMIN';
+    const role = this.getRoleFromToken();
+    return role === 'ROLE_ADMIN' || role === 'ADMIN';
   }
 
   isUser(): boolean {
-    return this.getRoleFromToken() === 'ROLE_USER';
+    const role = this.getRoleFromToken();
+    return role === 'ROLE_USER' || role === 'USER';
   }
 
   isLoggedIn(): boolean {
-    return !!sessionStorage.getItem("token");
+    return this.hasToken();
   }
 
   // =========================
@@ -125,24 +141,22 @@ export class LoginService {
     return this.currentUserRole.asObservable();
   }
 
-  get currentRoleValue(): string {
-    return this.currentUserRole.value;
-  }
-
   // =========================
-  // ⚙️ ERROR
+  // ⚙️ MANEJO DE ERRORES
   // =========================
 
   private handleError(error: HttpErrorResponse) {
-    console.error("Backend error:", error.status, error.error);
-    return throwError(() => new Error("Error en login"));
+    let msg = "Error en la operación";
+    if (error.status === 401) {
+      msg = "Credenciales inválidas";
+    } else if (error.status === 403) {
+      msg = "No tiene permisos suficientes";
+    }
+    return throwError(() => new Error(msg));
   }
 
-  // =========================
-  // 🔍 HELPERS
-  // =========================
-
   private hasToken(): boolean {
-    return !!sessionStorage.getItem("token");
+    const token = sessionStorage.getItem("token");
+    return !!token && token !== "undefined" && token.length > 10;
   }
 }
