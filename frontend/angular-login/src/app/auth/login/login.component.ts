@@ -79,6 +79,7 @@ export class LoginComponent implements OnInit {
       this.loginForm.markAllAsTouched();
     }
   }
+//repartimos roles
 
   private redirectByRole(): void {
     if (this.loginService.isAdmin()) {

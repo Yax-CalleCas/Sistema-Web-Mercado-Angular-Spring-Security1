@@ -54,9 +54,10 @@ public class UserController {
         return ResponseEntity.ok(userService.updateUser(id, request));
     }
 
-    // 6. CAMBIO DE ESTADO (Activar/Desactivar)
-    @PutMapping("/{id}/status")
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+
+ // Cambia esto en UserController.java
+    @RequestMapping(value = "/{id}/status", method = {RequestMethod.PUT, RequestMethod.PATCH})
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<UserDTO> toggleStatus(@PathVariable Integer id) {
         return ResponseEntity.ok(userService.toggleUserStatus(id));
     }

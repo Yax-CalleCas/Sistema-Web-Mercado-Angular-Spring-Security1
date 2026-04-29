@@ -21,7 +21,6 @@ export class PuestoService {
     return this.http.get<any>(`${this.apiUrl}/page?page=${page}&size=${size}`);
   }
 
-  // 🔥 Modificados para coincidir con la nueva lógica de 'estado' en Java
   listarDisponibles(): Observable<Puesto[]> {
     return this.http.get<Puesto[]>(`${this.apiUrl}/disponibles`);
   }

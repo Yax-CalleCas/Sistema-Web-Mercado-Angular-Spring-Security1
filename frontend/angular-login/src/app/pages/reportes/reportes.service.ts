@@ -11,12 +11,13 @@ export class ReportesService {
 
   constructor(private http: HttpClient) { }
 
-  getDashboardStats(): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/dashboard`);
-  }
 
   getSociosReport(): Observable<SocioReporteDTO[]> {
     return this.http.get<SocioReporteDTO[]>(`${this.apiUrl}/socios`);
+  }
+  // En reportes.service.ts
+  getDashboardStats(params?: any): Observable<any> {
+    return this.http.get(`${this.apiUrl}/dashboard`, { params });
   }
 
   // 🔥 NUEVOS MÉTODOS

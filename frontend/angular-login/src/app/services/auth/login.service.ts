@@ -20,9 +20,7 @@ export class LoginService {
 
   constructor(private http: HttpClient) { }
 
-  // =========================
-  // 🔐 LOGIN (Sincronizado)
-  // =========================
+  //  LOGIN (Sincronizado)
 
   login(credentials: LoginRequest): Observable<any> {
     return this.http.post<any>(this.url, credentials).pipe(
@@ -43,9 +41,7 @@ export class LoginService {
     );
   }
 
-  // =========================
-  // 👤 SOCIO (Carga perfil por email/sub)
-  // =========================
+  //  SOCIO (Carga perfil por email/sub)
 
   loadSocio(): Observable<any> {
     const user = this.getUserFromToken();
@@ -66,9 +62,8 @@ export class LoginService {
     );
   }
 
-  // =========================
-  // 📝 REGISTRO
-  // =========================
+
+  // REGISTRO
 
   register(data: any): Observable<any> {
     return this.http.post<any>(this.registerUrl, data).pipe(
@@ -76,9 +71,7 @@ export class LoginService {
     );
   }
 
-  // =========================
-  // 🚪 LOGOUT
-  // =========================
+  //  LOGOUT
 
   logout(): void {
     sessionStorage.removeItem("token");
@@ -88,9 +81,7 @@ export class LoginService {
     this.currentUserRole.next('');
   }
 
-  // =========================
-  // 🧠 LÓGICA DE TOKEN
-  // =========================
+  //  LÓGICA DE TOKEN
 
   getUserFromToken(): any {
     const token = sessionStorage.getItem("token");
@@ -129,9 +120,8 @@ export class LoginService {
     return this.hasToken();
   }
 
-  // =========================
-  // 📡 OBSERVABLES
-  // =========================
+
+  //  OBSERVABLES
 
   get userLoginOn(): Observable<boolean> {
     return this.currentUserLoginOn.asObservable();
@@ -141,9 +131,8 @@ export class LoginService {
     return this.currentUserRole.asObservable();
   }
 
-  // =========================
-  // ⚙️ MANEJO DE ERRORES
-  // =========================
+
+  //  MANEJO DE ERRORES
 
   private handleError(error: HttpErrorResponse) {
     let msg = "Error en la operación";

@@ -1,0 +1,163 @@
+/* Importar una fuente más limpia y moderna */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+
+:root {
+  --primary-color: #4361ee;
+  --secondary-color: #3f37c9;
+  --success-color: #4cc9f0;
+  --warning-color: #f72585;
+  --bg-light: #f8f9fd;
+  --text-main: #2b2d42;
+}
+
+.report-container {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background-color: var(--bg-light);
+  min-height: 100vh;
+  padding: 2rem;
+}
+
+/* Header & Badges */
+.header-section h2 {
+  color: var(--text-main);
+  letter-spacing: -1px;
+}
+
+.date-badge {
+  background: #ffffff;
+  padding: 10px 20px;
+  border-radius: 12px;
+  font-weight: 600;
+  color: var(--primary-color);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+  border: 1px solid rgba(0,0,0,0.05);
+}
+
+/* Sección de Filtros Estilo Glass */
+.filter-card {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
+  border-radius: 20px !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+}
+
+.filter-card .form-control {
+  border-radius: 10px;
+  padding: 0.6rem 1rem;
+  border: 1px solid #e0e0e0;
+}
+
+.btn-primary {
+  background-color: var(--primary-color);
+  border: none;
+  border-radius: 12px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+  background-color: var(--secondary-color);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(67, 97, 238, 0.3);
+}
+
+/* Tarjetas de Estadísticas (KPIs) */
+.stat-card {
+  border-radius: 24px !important;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  border: none;
+}
+
+.stat-card:hover {
+  transform: translateY(-10px);
+}
+
+.bg-gradient-primary {
+  background: linear-gradient(135deg, #4361ee 0%, #4895ef 100%);
+}
+.bg-gradient-success {
+  background: linear-gradient(135deg, #06d6a0 0%, #118ab2 100%);
+}
+.bg-gradient-info {
+  background: linear-gradient(135deg, #7209b7 0%, #b5179e 100%);
+}
+
+.stat-icon {
+  font-size: 2.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bg-white-20 {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 15px;
+  padding: 12px;
+}
+
+/* Tablas Modernas */
+.custom-table thead th {
+  background-color: #f1f4f9;
+  color: #6c757d;
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.5px;
+  padding: 1.2rem;
+}
+
+.custom-table tbody td {
+  padding: 1.2rem;
+  border-bottom: 1px solid #f1f4f9;
+}
+
+.avatar-circle {
+  width: 42px;
+  height: 42px;
+  background: var(--primary-color);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 14px; /* Cuadrado redondeado es más moderno que el círculo */
+  font-weight: bold;
+  box-shadow: 0 4px 10px rgba(67, 97, 238, 0.2);
+}
+
+/* Badges de Estado */
+.status-badge {
+  padding: 8px 16px;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+}
+
+.status-badge.active {
+  background-color: #e2f9f2;
+  color: #06d6a0;
+}
+
+.status-badge.inactive {
+  background-color: #ffe5ec;
+  color: #f72585;
+}
+
+/* Personalización del Card del Historial */
+.bg-dark.text-white {
+  background: #2b2d42 !important;
+}
+
+.btn-warning {
+  background: #ffd166;
+  border: none;
+  border-radius: 10px;
+  color: #2b2d42;
+  font-weight: 700;
+}
+
+.table-striped tbody tr:nth-of-type(odd) {
+  background-color: rgba(0, 0, 0, 0.01);
+}
+
+.x-small { font-size: 0.78rem; }

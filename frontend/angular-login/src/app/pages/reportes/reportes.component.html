@@ -1,76 +1,143 @@
-<div class="container-fluid py-4">
-  <h2 class="mb-4">📊 Panel de Reportes Administrativos</h2>
+<div class="container-fluid py-4 report-container">
 
-  <div class="row mb-4">
-    <div class="col-md-3">
-      <div class="card text-white bg-primary mb-3">
-        <div class="card-body">
-          <h5 class="card-title">Ingresos Totales</h5>
-          <p class="card-text fs-3">{{ stats.ingresosTotales | currency:'PEN':'S/.' }}</p>
-        </div>
-      </div>
+  <div class="header-section mb-4 d-flex justify-content-between align-items-center">
+    <div>
+      <h2 class="fw-bold text-dark m-0">📊 Panel de Reportes Administrativos</h2>
+      <p class="text-muted small">Gestión financiera y estado del mercado en tiempo real</p>
     </div>
-    <div class="col-md-3">
-      <div class="card text-white bg-success mb-3">
-        <div class="card-body">
-          <h5 class="card-title">Ocupación</h5>
-          <p class="card-text fs-3">{{ stats.porcentajeOcupacion | number:'1.1-2' }}%</p>
-          <small>{{ stats.puestosOcupados }} de {{ stats.totalPuestos }} puestos</small>
-        </div>
-      </div>
+    <div class="date-badge">
+      <i class="bi bi-calendar3 me-2"></i> {{ today | date:'dd MMMM, yyyy' }}
     </div>
-    <div class="col-md-3">
-      <div class="card text-white bg-info mb-3">
-        <div class="card-body">
-          <h5 class="card-title">Servicios Recaudados</h5>
-          <p class="card-text fs-3">{{ stats.recaudacionServicios | currency:'PEN':'S/.' }}</p>
+  </div>
+
+  <div class="card filter-card mb-4 border-0 shadow-sm">
+    <div class="card-body p-4">
+      <div class="row align-items-end g-3">
+        <div class="col-md-3">
+          <label class="form-label fw-semibold text-secondary small text-uppercase">Fecha Inicio</label>
+          <div class="input-group">
+            <span class="input-group-text bg-white border-end-0"><i class="bi bi-calendar-event"></i></span>
+            <input type="date" class="form-control border-start-0 ps-0" [(ngModel)]="fechaInicio">
+          </div>
         </div>
-      </div>
-    </div>
-    <div class="col-md-3">
-      <div class="card text-white bg-warning mb-3">
-        <div class="card-body">
-          <h5 class="card-title">Conceptos</h5>
-          <small *ngFor="let item of stats.porConcepto">
-            {{item[0]}}: {{item[1] | currency:'PEN':'S/.'}}<br>
-          </small>
+        <div class="col-md-3">
+          <label class="form-label fw-semibold text-secondary small text-uppercase">Fecha Fin</label>
+          <div class="input-group">
+            <span class="input-group-text bg-white border-end-0"><i class="bi bi-calendar-check"></i></span>
+            <input type="date" class="form-control border-start-0 ps-0" [(ngModel)]="fechaFin">
+          </div>
+        </div>
+        <div class="col-md-6 d-flex gap-2">
+          <button class="btn btn-primary px-4 py-2 flex-grow-1 shadow-sm" (click)="cargarDashboard()">
+            <i class="bi bi-search me-2"></i> Consultar Reporte
+          </button>
+          <button class="btn btn-outline-secondary px-3 py-2 shadow-sm" (click)="limpiarFiltros()" title="Limpiar Filtros">
+            <i class="bi bi-arrow-counterclockwise"></i>
+          </button>
         </div>
       </div>
     </div>
   </div>
 
-  <div class="card shadow">
-    <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
-      <h5 class="mb-0">Resumen de Cuenta por Socio</h5>
-      <button class="btn btn-sm btn-light" (click)="cargarReporteSocios()">🔄 Actualizar</button>
+  <div class="row mb-4 g-3">
+    <div class="col-md-3">
+      <div class="card stat-card h-100 border-0 shadow-sm bg-gradient-primary">
+        <div class="card-body">
+          <div class="d-flex justify-content-between">
+            <div>
+              <h6 class="text-white-50 text-uppercase fw-bold small">Ingresos Totales</h6>
+              <h3 class="text-white mb-0 fw-bold">{{ stats.ingresosTotales | currency:'PEN':'S/.' }}</h3>
+            </div>
+            <div class="stat-icon bg-white-20"><i class="bi bi-cash-stack"></i></div>
+          </div>
+        </div>
+      </div>
     </div>
-    <div class="card-body">
+
+    <div class="col-md-3">
+      <div class="card stat-card h-100 border-0 shadow-sm bg-gradient-success">
+        <div class="card-body">
+          <div class="d-flex justify-content-between">
+            <div>
+              <h6 class="text-white-50 text-uppercase fw-bold small">Ocupación</h6>
+              <h3 class="text-white mb-0 fw-bold">{{ stats.porcentajeOcupacion | number:'1.1-2' }}%</h3>
+              <div class="progress mt-2 bg-white-20" style="height: 6px;">
+                <div class="progress-bar bg-white" [style.width]="stats.porcentajeOcupacion + '%'"></div>
+              </div>
+              <small class="text-white-50 d-block mt-2">{{ stats.puestosOcupados }} / {{ stats.totalPuestos }} puestos</small>
+            </div>
+            <div class="stat-icon bg-white-20"><i class="bi bi-building-check"></i></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-3">
+      <div class="card stat-card h-100 border-0 shadow-sm bg-gradient-info">
+        <div class="card-body">
+          <div class="d-flex justify-content-between">
+            <div>
+              <h6 class="text-white-50 text-uppercase fw-bold small">Servicios</h6>
+              <h3 class="text-white mb-0 fw-bold">{{ stats.recaudacionServicios | currency:'PEN':'S/.' }}</h3>
+            </div>
+            <div class="stat-icon bg-white-20"><i class="bi bi-lightning-charge"></i></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-3">
+      <div class="card stat-card h-100 border-0 shadow-sm bg-white border-start border-warning border-4">
+        <div class="card-body">
+          <h6 class="text-secondary text-uppercase fw-bold small">Detalle por Concepto</h6>
+          <div class="concept-list mt-2">
+            <div *ngFor="let item of stats.porConcepto" class="d-flex justify-content-between small border-bottom py-1">
+              <span class="text-dark">{{item[0]}}</span>
+              <span class="fw-bold">{{item[1] | currency:'PEN':'S/.'}}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card border-0 shadow-sm rounded-4 mb-5">
+    <div class="card-header bg-white border-0 py-3 d-flex justify-content-between align-items-center">
+      <h5 class="fw-bold text-dark mb-0"><i class="bi bi-people-fill me-2 text-primary"></i>Resumen por Socio</h5>
+      <button class="btn btn-light btn-sm rounded-circle shadow-sm" (click)="cargarReporteSocios()">
+        <i class="bi bi-arrow-repeat text-primary"></i>
+      </button>
+    </div>
+    <div class="card-body p-0">
       <div class="table-responsive">
-        <table class="table table-hover align-middle">
-          <thead class="table-light">
+        <table class="table table-hover mb-0 align-middle custom-table">
+          <thead class="table-light text-secondary">
           <tr>
-            <th>Socio</th>
+            <th class="ps-4">Socio</th>
             <th>DNI</th>
             <th class="text-center">Puestos</th>
-            <th>Total Pagado</th>
-            <th>Deuda Pendiente</th>
-            <th>Estado</th>
+            <th class="text-end">Total Pagado</th>
+            <th class="text-end">Deuda</th>
+            <th class="text-center">Estado</th>
           </tr>
           </thead>
           <tbody>
           <tr *ngFor="let socio of listaSocios">
-            <td>
-              <strong>{{ socio.nombreCompleto }}</strong><br>
-              <small class="text-muted">{{ socio.telefono }}</small>
+            <td class="ps-4">
+              <div class="d-flex align-items-center">
+                <div class="avatar-circle me-3">{{ socio.nombreCompleto.charAt(0) }}</div>
+                <div>
+                  <div class="fw-bold">{{ socio.nombreCompleto }}</div>
+                  <div class="text-muted x-small"><i class="bi bi-telephone me-1"></i>{{ socio.telefono }}</div>
+                </div>
+              </div>
             </td>
             <td>{{ socio.dni }}</td>
+            <td class="text-center"><span class="badge bg-light text-dark border">{{ socio.cantidadPuestos }}</span></td>
+            <td class="text-end fw-bold text-success">{{ socio.totalPagado | currency:'PEN':'S/.' }}</td>
+            <td class="text-end fw-bold text-danger">{{ socio.totalDeuda | currency:'PEN':'S/.' }}</td>
             <td class="text-center">
-              <span class="badge rounded-pill bg-secondary">{{ socio.cantidadPuestos }}</span>
-            </td>
-            <td class="text-success fw-bold">{{ socio.totalPagado | currency:'PEN':'S/.' }}</td>
-            <td class="text-danger fw-bold">{{ socio.totalDeuda | currency:'PEN':'S/.' }}</td>
-            <td>
-                <span [ngClass]="socio.estado === 'ACTIVO' ? 'badge bg-success' : 'badge bg-danger'">
+                <span class="status-badge" [ngClass]="socio.estado === 'ACTIVO' ? 'active' : 'inactive'">
                   {{ socio.estado }}
                 </span>
             </td>
@@ -79,37 +146,38 @@
         </table>
       </div>
     </div>
-
-
   </div>
-  <div class="card shadow mt-5">
-    <div class="card-header bg-primary text-white d-flex justify-content-between">
-      <h5 class="mb-0">📜 Historial de Reportes Guardados</h5>
-      <button class="btn btn-sm btn-light" (click)="generarYGuardarReporte()">
-        💾 Guardar Estado Actual
+
+  <div class="card border-0 shadow-sm rounded-4">
+    <div class="card-header bg-dark text-white py-3 rounded-top-4 d-flex justify-content-between align-items-center">
+      <h5 class="mb-0 fw-bold"><i class="bi bi-archive me-2"></i>Historial de Cierres</h5>
+      <button class="btn btn-warning btn-sm fw-bold px-3 shadow" (click)="generarYGuardarReporte()">
+        <i class="bi bi-cloud-arrow-up-fill me-2"></i>Guardar Estado Actual
       </button>
     </div>
-    <div class="card-body">
-      <table class="table table-sm">
-        <thead>
-        <tr>
-          <th>Fecha</th>
-          <th>Ingresos</th>
-          <th>Ocupación</th>
-          <th>Servicios</th>
-          <th>Generado por</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr *ngFor="let h of historialReportes">
-          <td>{{ h.fechaGeneracion | date:'dd/MM/yyyy HH:mm' }}</td>
-          <td>{{ h.ingresosTotales | currency:'PEN':'S/.' }}</td>
-          <td>{{ h.puestosOcupados }}/{{ h.totalPuestos }}</td>
-          <td>{{ h.recaudacionServicios | currency:'PEN':'S/.' }}</td>
-          <td>{{ h.generadoPor }}</td>
-        </tr>
-        </tbody>
-      </table>
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table table-sm table-striped mb-0">
+          <thead class="bg-light">
+          <tr>
+            <th class="ps-4 py-3">Fecha de Cierre</th>
+            <th>Ingresos</th>
+            <th>Ocupación</th>
+            <th>Servicios</th>
+            <th>Administrador</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let h of historialReportes">
+            <td class="ps-4 text-primary fw-semibold">{{ h.fechaGeneracion | date:'dd/MM/yyyy HH:mm' }}</td>
+            <td>{{ h.ingresosTotales | currency:'PEN':'S/.' }}</td>
+            <td>{{ h.puestosOcupados }}/{{ h.totalPuestos }}</td>
+            <td>{{ h.recaudacionServicios | currency:'PEN':'S/.' }}</td>
+            <td><span class="badge bg-secondary-subtle text-secondary">{{ h.generadoPor }}</span></td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 </div>

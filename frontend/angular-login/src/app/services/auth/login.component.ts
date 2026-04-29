@@ -48,10 +48,10 @@ export class LoginComponent implements OnInit {
         next: () => {
           this.loginError = "";
 
-          // 🔥 REDIRECCIÓN INMEDIATA (no depende del backend extra)
+          //  REDIRECCIÓN INMEDIATA (no depende del backend extra)
           this.redirectByRole();
 
-          // 🔥 CARGA DE PERFIL SIN BLOQUEAR
+          //  CARGA DE PERFIL SIN BLOQUEAR
           this.loginService.loadSocio().subscribe({
             next: () => {},
             error: (err) => {

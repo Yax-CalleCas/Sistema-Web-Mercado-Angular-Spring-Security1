@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -23,6 +24,7 @@ import java.util.List;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity // 🚀 IMPORTANTE: Habilita el uso de @PreAuthorize en los controladores
 @RequiredArgsConstructor
 public class SecurityConfig {
 
@@ -32,13 +34,13 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
-            // 1. Deshabilitar CSRF (necesario para APIs REST con JWT)
+            // 1. Seguridad básica
             .csrf(csrf -> csrf.disable()) 
             
-            // 2. Habilitar CORS con la configuración definida abajo
+            // 2. Configuración de CORS
             .cors(cors -> cors.configurationSource(corsConfigurationSource())) 
             
-            // 3. Manejo de errores para que Angular reciba JSON en lugar de HTML
+            // 3. Manejo de excepciones (JSON para Angular)
             .exceptionHandling(exception -> exception
                 .authenticationEntryPoint((request, response, authException) -> {
                     response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
@@ -52,30 +54,25 @@ public class SecurityConfig {
                 })
             )
             
-            // 4. Configuración de Rutas (Autorizaciones)
+            // 4. Autorización de rutas
             .authorizeHttpRequests(auth -> auth
-                // RUTA PÚBLICA: Registro y Login (Permite que cualquier usuario se registre)
+                // Públicas
                 .requestMatchers("/auth/**", "/api/v1/auth/**").permitAll()
-                
-                // Permitir peticiones OPTIONS (necesario para que el navegador valide el CORS)
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() 
-                
-                // Puestos es público para que los visitantes vean el catálogo
                 .requestMatchers("/api/puestos/**").permitAll() 
 
-                // RUTAS DE ADMINISTRADOR: Gestión de usuarios y reportes
-                .requestMatchers("/api/v1/users/**", "/api/admin/reportes/**")
-                    .hasAnyAuthority("ADMIN", "ROLE_ADMIN")
+                // Administrativas (Aseguramos que cubra todos los sub-recursos)
+                .requestMatchers("/api/v1/users/**").hasAnyAuthority("ADMIN", "ROLE_ADMIN")
+                .requestMatchers("/api/admin/reportes/**").hasAnyAuthority("ADMIN", "ROLE_ADMIN")
                 
-                // RUTAS DE SOCIO/USER: Pagos y perfil propio
+                // Usuarios / Socios
                 .requestMatchers("/api/pagos/**", "/api/v1/socios/**", "/api/v1/user/**")
                     .hasAnyAuthority("ADMIN", "USER", "ROLE_ADMIN", "ROLE_USER")
                 
-                // Cualquier otra ruta requiere estar logueado
                 .anyRequest().authenticated()
             )
             
-            // 5. No guardar estado de sesión (Stateless) ya que usamos JWT
+            // 5. Gestión de sesión sin estado
             .sessionManagement(session ->
                 session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
@@ -89,29 +86,23 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
 
-        // Permitir el origen de tu aplicación Angular
+        // Origen de Angular
         config.setAllowedOrigins(List.of("http://localhost:4200")); 
         
-        // Métodos permitidos
+        // Métodos: Agregamos PATCH explícitamente para evitar el error 401 en cambios de estado
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         
-        // Cabeceras permitidas
+        // Cabeceras: Agregamos las necesarias para el intercambio de tokens
         config.setAllowedHeaders(Arrays.asList(
             "Authorization", 
             "Content-Type", 
             "Accept", 
             "X-Requested-With", 
-            "Origin",
-            "Access-Control-Request-Method",
-            "Access-Control-Request-Headers"
+            "Origin"
         ));
         
-        // Permitir credenciales (Cookies, Auth headers)
         config.setAllowCredentials(true);
-        
-        // Exponer la cabecera de Authorization para que Angular pueda leer el token si fuera necesario
         config.setExposedHeaders(List.of("Authorization")); 
-        
         config.setMaxAge(3600L); 
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

@@ -14,7 +14,7 @@ export class PagosComponent implements OnInit {
   loading = false;
 
   socioActual = {
-    id: 1 // 🔥 aquí deberías traerlo del auth service
+    id: 1
   };
 
   constructor(private pagosService: PagosService) {}
@@ -23,7 +23,7 @@ export class PagosComponent implements OnInit {
     this.cargarPagos();
   }
 
-  // 📄 historial
+  //  historial
   cargarPagos() {
     this.loading = true;
 
@@ -37,7 +37,7 @@ export class PagosComponent implements OnInit {
       });
   }
 
-  // 💳 iniciar pago
+  //  iniciar pago
   pagar(puesto: any) {
 
     const data: PagoRequest = {
@@ -49,12 +49,12 @@ export class PagosComponent implements OnInit {
 
     this.pagosService.crearCheckout(data)
       .subscribe((url: any) => {
-        // 🔥 redirección a pasarela
+        //  redirección a pasarela
         window.location.href = url;
       });
   }
 
-  // 🧠 simular puesto (si no tienes backend aún)
+  //  simular puesto (si no tienes backend aún)
   puestosDemo = [
     { id: 1, codigo: 'P-101', precioAlquiler: 150 },
     { id: 2, codigo: 'P-102', precioAlquiler: 200 }

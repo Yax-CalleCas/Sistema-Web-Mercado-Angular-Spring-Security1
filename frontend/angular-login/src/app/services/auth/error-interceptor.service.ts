@@ -20,8 +20,7 @@ export class ErrorInterceptorService implements HttpInterceptor {
           // Error del lado del cliente (ej. red caída)
           errorMessage = `Error: ${error.error.message}`;
         } else {
-          // Error del lado del servidor (Spring Boot)
-          // Intentamos sacar el mensaje que configuramos en los "throw new RuntimeException" de Java
+
           const serverMessage = error.error?.message || error.message;
 
           switch (error.status) {
@@ -51,15 +50,7 @@ export class ErrorInterceptorService implements HttpInterceptor {
         console.error('Cuerpo completo:', error.error);
         console.error('--------------------------');
 
-        // 3. (Opcional) Mostrar alerta al usuario
-        /*
-        Swal.fire({
-          icon: 'error',
-          title: '¡Ups!',
-          text: errorMessage,
-          confirmButtonColor: '#0d6efd'
-        });
-        */
+
 
         return throwError(() => new Error(errorMessage));
       })

@@ -9,7 +9,7 @@ import { CommonModule } from "@angular/common";
   styleUrls: ['./reportes.component.css']
 })
 export class ReportesComponent implements OnInit {
-
+  today = new Date();
   stats: any = {
     ingresosTotales: 0,
     totalPuestos: 0,
@@ -30,11 +30,26 @@ export class ReportesComponent implements OnInit {
     this.cargarHistorial(); // 🔥 Cargar historial al iniciar
   }
 
+
+// En reportes.component.ts
+  fechaInicio: string = '';
+  fechaFin: string = '';
+
   cargarDashboard() {
-    this.reportesService.getDashboardStats().subscribe({
+    const params: any = {};
+    if (this.fechaInicio) params.inicio = this.fechaInicio;
+    if (this.fechaFin) params.fin = this.fechaFin;
+
+    this.reportesService.getDashboardStats(params).subscribe({
       next: (data) => this.stats = data,
       error: (err) => console.error("Error cargando stats", err)
     });
+  }
+
+  limpiarFiltros() {
+    this.fechaInicio = '';
+    this.fechaFin = '';
+    this.cargarDashboard();
   }
 
   cargarReporteSocios() {

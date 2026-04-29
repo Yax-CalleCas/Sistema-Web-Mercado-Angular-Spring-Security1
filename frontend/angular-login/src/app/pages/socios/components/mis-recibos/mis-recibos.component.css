@@ -1,0 +1,122 @@
+/* Importar tipografía si no la tienes */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+
+.card {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background: #ffffff;
+  border: none;
+  /* Sombra suave y profunda */
+  box-shadow: 0 10px 30px rgba(158, 173, 186, 0.1) !important;
+}
+
+/* Header del Historial */
+.card-header {
+  border-bottom: 1px solid #f0f2f5 !important;
+}
+
+.card-header h5 {
+  letter-spacing: -0.5px;
+  color: #1a202c;
+}
+
+/* Botón de actualizar circular */
+.btn-light.rounded-circle {
+  width: 35px;
+  height: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  border: 1px solid #edf2f7;
+}
+
+.btn-light.rounded-circle:hover {
+  background-color: #4361ee;
+  color: white;
+  transform: rotate(180deg);
+}
+
+/* Estilos de la Tabla */
+.table thead th {
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+  padding: 1rem;
+  background-color: #f8fafc;
+  border-bottom: 1px solid #edf2f7;
+}
+
+.table tbody tr {
+  transition: background-color 0.2s ease;
+}
+
+.table tbody tr:hover {
+  background-color: #fcfdfe !important;
+}
+
+.table td {
+  padding: 1.2rem 1rem;
+  border-bottom: 1px solid #f1f5f9;
+  font-size: 0.9rem;
+}
+
+/* Estilo del ID (#) */
+.text-muted.fw-bold {
+  color: #a0aec0 !important;
+  font-family: 'Courier New', Courier, monospace; /* Toque de recibo real */
+}
+
+/* Concepto y detalles */
+.text-dark.fw-bold {
+  color: #2d3748 !important;
+}
+
+/* Badge de Método de Pago */
+.badge.bg-light {
+  background-color: #f7fafc !important;
+  color: #4a5568 !important;
+  font-weight: 500;
+  padding: 0.5em 1em;
+  border: 1px solid #e2e8f0 !important;
+}
+
+/* Monto en azul profesional */
+.text-primary.fw-bold {
+  color: #4361ee !important;
+  font-size: 1rem;
+}
+
+/* Botón de Acción (Recibo) */
+.btn-outline-primary.rounded-pill {
+  border-color: #4361ee;
+  color: #4361ee;
+  font-weight: 600;
+  font-size: 0.8rem;
+  transition: all 0.3s ease;
+}
+
+.btn-outline-primary.rounded-pill:hover {
+  background-color: #4361ee;
+  color: white;
+  box-shadow: 0 4px 11px rgba(67, 97, 238, 0.25);
+}
+
+/* Spinner y Estados Vacíos */
+.spinner-border {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-width: 0.2em;
+}
+
+.opacity-25 {
+  opacity: 0.15 !important;
+}
+
+/* Animación de entrada para las filas */
+tbody tr {
+  animation: slideUp 0.4s ease forwards;
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}

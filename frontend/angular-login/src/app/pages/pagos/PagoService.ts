@@ -7,12 +7,14 @@ import { Pago } from '../../models/Pago';
   providedIn: 'root'
 })
 export class PagosService {
-  private apiUrl = 'http://localhost:8080/api/pagos';
+
+
+  private apiUrl = 'http://localhost:8080/api/v1/pagos';
 
   constructor(private http: HttpClient) {}
 
   /**
-   * Crea la sesión en Stripe. Recibe la URL como texto plano.
+   * Crea la sesión en Stripe
    */
   crearCheckout(request: any): Observable<string> {
     return this.http.post(`${this.apiUrl}/crear-checkout`, request, {
@@ -21,41 +23,44 @@ export class PagosService {
   }
 
   /**
-   * Confirma el pago al volver de la pasarela.
-   * Este método dispara la lógica automática en Java.
+   * Confirma el pago al volver de la pasarela
    */
   confirmarPago(sessionId: string): Observable<any> {
-    return this.http.get(`${this.apiUrl}/confirmar?session_id=${sessionId}`);
+    return this.http.get(`${this.apiUrl}/confirmar`, {
+      params: { session_id: sessionId }
+    });
   }
+
   /**
-   * ADMIN: Listar todos los pagos que están en estado PENDIENTE
+   * ADMIN: pagos pendientes
    */
   getPagosPendientes(): Observable<Pago[]> {
     return this.http.get<Pago[]>(`${this.apiUrl}/pendientes`);
   }
 
   /**
-   * ADMIN: Aprobar manualmente un pago por su ID
+   * ADMIN: aprobar pago
    */
   aprobarPago(pagoId: number): Observable<any> {
     return this.http.put(`${this.apiUrl}/${pagoId}/aprobar`, {});
   }
+
   /**
-   * Historial específico para el Socio logueado.
+   * Socio: historial
    */
   getPagosPorSocio(socioId: number): Observable<Pago[]> {
     return this.http.get<Pago[]>(`${this.apiUrl}/socio/${socioId}`);
   }
 
   /**
-   * REPORTE AUDITORÍA: Obtiene todos los pagos registrados (Solo Admin).
+   * ADMIN: historial completo
    */
   getHistorialCompleto(): Observable<Pago[]> {
     return this.http.get<Pago[]>(`${this.apiUrl}/historial-completo`);
   }
 
   /**
-   * Obtiene el total pagado por un socio (usado en las cards del dashboard).
+   * Total pagado por socio
    */
   getTotalSocio(socioId: number): Observable<number> {
     return this.http.get<number>(`${this.apiUrl}/total-socio/${socioId}`);

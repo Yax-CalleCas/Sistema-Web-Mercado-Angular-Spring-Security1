@@ -1,13 +1,15 @@
 package com.cibertec.dsw1jwt.service;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import com.cibertec.dsw1jwt.dto.SocioReporteDTO;
 import com.cibertec.dsw1jwt.models.ReporteGeneral;
-import com.cibertec.dsw1jwt.repository.PagoRepository;
 import com.cibertec.dsw1jwt.repository.PuestoRepository;
 import com.cibertec.dsw1jwt.repository.ReporteGeneralRepository;
 import com.cibertec.dsw1jwt.repository.ReporteRepository;
-import jakarta.transaction.Transactional;
+
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
@@ -16,16 +18,27 @@ import java.util.Map;
 @Service
 @RequiredArgsConstructor
 public class ReporteService {
-    private final PagoRepository pagoRepository;
-    private final PuestoRepository puestoRepository;
-    private  final ReporteGeneralRepository reporteGeneralRepository;	
-    // Inyectamos el ReporteRepository para usar la query optimizada
-    private final ReporteRepository reporteRepository;
 
-    public Map<String, Object> obtenerEstadisticasGlobales() {
+    private final PuestoRepository puestoRepository;
+    private final ReporteGeneralRepository reporteGeneralRepository;
+    private final ReporteRepository reporteRepository;
+    public Map<String, Object> obtenerEstadisticas(LocalDate inicio, LocalDate fin) {
         Map<String, Object> stats = new HashMap<>();
-        
-        stats.put("ingresosTotales", pagoRepository.totalHistorico() != null ? pagoRepository.totalHistorico() : 0.0);
+
+        // 1. CONVERSIÓN EXPLÍCITA A LocalDateTime 🚀
+        // Inicio: 00:00:00 del día seleccionado
+        LocalDateTime fechaInicio = (inicio != null) 
+            ? inicio.atStartOfDay() 
+            : LocalDate.of(2000, 1, 1).atStartOfDay();
+
+        // Fin: 23:59:59 del día seleccionado
+        LocalDateTime fechaFin = (fin != null) 
+            ? fin.atTime(23, 59, 59) 
+            : LocalDate.now().atTime(23, 59, 59);
+
+        // 2. Ahora sí coinciden los tipos (LocalDateTime, LocalDateTime)
+        Double ingresos = reporteRepository.sumIngresosPorRango(fechaInicio, fechaFin);
+        stats.put("ingresosTotales", (ingresos != null) ? ingresos : 0.0);
 
         long total = puestoRepository.count();
         long ocupados = puestoRepository.countByEstado("OCUPADO");
@@ -33,18 +46,17 @@ public class ReporteService {
         stats.put("puestosOcupados", ocupados);
         stats.put("porcentajeOcupacion", total > 0 ? (double) ocupados / total * 100 : 0);
 
-        Double agua = puestoRepository.sumCostoAguaFijoPorEstado("OCUPADO");
-        Double luz = puestoRepository.sumCostoLuzFijoPorEstado("OCUPADO");
-        stats.put("recaudacionServicios", (agua != null ? agua : 0.0) + (luz != null ? luz : 0.0));
+        stats.put("porConcepto", reporteRepository.recaudacionPorConceptoYFecha(fechaInicio, fechaFin));
 
-        stats.put("porConcepto", pagoRepository.recaudacionPorConcepto());
+        Double servicios = reporteRepository.sumServiciosPorRango(fechaInicio, fechaFin);
+        stats.put("recaudacionServicios", (servicios != null) ? servicios : 0.0);
 
         return stats;
     }
     @Transactional
     public ReporteGeneral guardarEstadoActual(String adminUser) {
-        // Obtenemos los datos actuales (usando la lógica que ya tenemos)
-        Map<String, Object> stats = obtenerEstadisticasGlobales();
+        // Guardamos el cierre con los datos históricos (null, null)
+        Map<String, Object> stats = obtenerEstadisticas(null, null);
         
         ReporteGeneral historico = new ReporteGeneral();
         historico.setFechaGeneracion(LocalDateTime.now());
@@ -56,10 +68,11 @@ public class ReporteService {
 
         return reporteGeneralRepository.save(historico);
     }
-   //sirve para hacer muchas cosnsultas  a la bd 
+
     public List<SocioReporteDTO> obtenerReporteSocios() {
         return reporteRepository.obtenerReporteGeneralSocios();
     }
+
     public List<ReporteGeneral> listarHistorial() {
         return reporteGeneralRepository.findAllByOrderByFechaGeneracionDesc();
     }
