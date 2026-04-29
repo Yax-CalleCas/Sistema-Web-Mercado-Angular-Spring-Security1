@@ -54,3 +54,8 @@ cd backend
 
 # Ejecutar proyecto
 ./mvnw spring-boot:run
+
+--angular
+cd angular-login
+dir
+npm install
